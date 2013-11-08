@@ -6,6 +6,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NSliceTests", "NSliceTests\NSliceTests.csproj", "{614919B8-D94E-4F17-B855-4C43A274654B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{5A58BCA5-2CD5-4CE6-89EB-146D15596CAA}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NSlicePerformanceTests", "NSlicePerformanceTests\NSlicePerformanceTests.csproj", "{D736D5CF-E0A4-4887-AA3F-8739B931F5DA}"
 EndProject
