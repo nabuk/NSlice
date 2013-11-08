@@ -1,0 +1,4 @@
+NSlice
+======
+
+Slicing for .NET
