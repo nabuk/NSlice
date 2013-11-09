@@ -38,4 +38,3 @@ But there is more. Slice allows each argument to be negative. It might seem weir
 ##Documentation
 
 - [Cheat Sheet](https://github.com/nabuk/NSlice/wiki/Cheat-Sheet)
-- [Wiki](https://github.com/nabuk/NSlice/wiki)
