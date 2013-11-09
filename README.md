@@ -31,9 +31,9 @@ It fits nicely into LINQ model and could be even used to slice a stream, if the 
 
 But there is more. Slice allows each argument to be negative. It might seem weird to use negative indices but they are realy useful. What negative indices are ? They just index collection backwards, for example: `-1` means last, `-2` means one before last and so on. See following two examples to grasp the idea:
 
-- Get last five element: `Slice(-5)`
+- Get last five elements: `Slice(-5)`
 
-- Get collection without first and last element: `Slice(1, -1)`
+- Get collection without first and last elements: `Slice(1, -1)`
 
 ##Documentation
 
