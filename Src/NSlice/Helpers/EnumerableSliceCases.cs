@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace NSlice.Helpers
 {
-    static class SliceCases
+    static class EnumerableSliceCases
     {
         internal static IEnumerable<T> PPP<T>(IEnumerable<T> source, int from, int? to, int step)
         {
