@@ -64,60 +64,29 @@ namespace NSlice.Helpers
         {
             if (from <= to)
                 yield break;
-
+            int count;
+            step = -step;
             var buffer = new DynamicBuffer<T>();
             using (var enumerator = source.GetEnumerator())
             {
-                step = -step;
-
                 if (to.HasValue)
                 {
                     var toValue = to.Value;
-                    var tmpIter = toValue;
-                    while (tmpIter >= 0 && enumerator.MoveNext())
-                        --tmpIter;
-                    if (tmpIter >= 0)
+                    if (enumerator.Skip(toValue + 1) != toValue + 1)
                         yield break;
-
-                    if (step == 1)
-                    {
-                        buffer.BufferUpToCount(enumerator, from - toValue);
-                    }
-                    else
-                    {
-                        var offset = (from - toValue - 1) % step;
-                        tmpIter = offset;
-                        while (tmpIter > 0 && enumerator.MoveNext())
-                            --tmpIter;
-                        if (tmpIter > 0)
-                            yield break;
-
-                        buffer.BufferWithStepUpToCount(enumerator, step, from - toValue - offset);
-                    }
+                    count = from - toValue;
                 }
                 else
-                {
-                    if (step == 1)
-                    {
-                        buffer.BufferUpToCount(enumerator, from + 1);
-                    }
-                    else
-                    {
-                        var offset = from % step;
-                        var tmpIter = offset;
-                        while (tmpIter > 0 && enumerator.MoveNext())
-                            --tmpIter;
-                        if (tmpIter > 0)
-                            yield break;
-
-                        buffer.BufferWithStepUpToCount(enumerator, step, from + 1 - offset);
-                    }
-                }
+                    count = from + 1;
+                buffer.BufferUpToCount(enumerator, count);
+                count = buffer.length;
             }
-
-            var i = buffer.length;
-            while (i > 0)
-                yield return buffer.items[--i];
+            --count;
+            while (count >= 0)
+            {
+                yield return buffer.items[count];
+                count -= step;
+            }
         }
 
         internal static IEnumerable<T> NNP<T>(IEnumerable<T> source, int from, int to, int step)
@@ -133,39 +102,18 @@ namespace NSlice.Helpers
             {
                 buffer.BufferUpToCount(enumerator, from);
                 count = buffer.length;
-                if (buffer.length == from)
+                if (from == count)
                     count += buffer.RotateUntilEndWithCount(enumerator);
             }
 
-            if (step == 1)
+            to = Math.Min(from, count) - to;
+            int head = buffer.head;
+            int i = 0;
+            while (i < to)
             {
-                var length = buffer.length;
-                if (length <= to)
-                    yield break;
-
-                count = length - to;
-                while (count-- > 0)
-                {
-                    yield return buffer.items[buffer.head % length];
-                    buffer.head++;
-                }
-            }
-            else
-            {
-                var length = buffer.length;
-                if (length <= to)
-                    yield break;
-                var offset = 0;
-                if (from > count)
-                    offset = (step - ((from - count) % step)) % step;
-
-                count = (length - to - offset + step - 1) / step;
-                buffer.head += offset;
-                while (count-- > 0)
-                {
-                    yield return buffer.items[buffer.head % length];
-                    buffer.head += step;
-                }
+                i += step;
+                yield return buffer.items[head];
+                head = (head + step) % buffer.length;
             }
         }
 
@@ -203,10 +151,7 @@ namespace NSlice.Helpers
             to = -to;
             using (var enumerator = source.GetEnumerator())
             {
-                var tmpIter = from;
-                while (tmpIter > 0 && enumerator.MoveNext())
-                    --tmpIter;
-                if (tmpIter > 0)
+                if (enumerator.Skip(from) != from)
                     yield break;
 
                 var buffer = new DynamicRotativeBuffer<T>();
@@ -232,7 +177,7 @@ namespace NSlice.Helpers
                         yield break;
 
                     var head = 0;
-                    tmpIter = 0;
+                    var tmpIter = 0;
                     while (enumerator.MoveNext())
                     {
                         if (tmpIter == 0)
@@ -259,107 +204,45 @@ namespace NSlice.Helpers
             int count;
             var buffer = new DynamicRotativeBuffer<T>();
 
-            if (step == 1)
+            using (var enumerator = source.GetEnumerator())
             {
-                using (var enumerator = source.GetEnumerator())
-                {
-                    var fromCount = from + 1;
-                    var toCount = to - 1;
-                    var minToBuffer = Math.Min(fromCount, toCount);
-                    buffer.BufferUpToCount(enumerator, minToBuffer);
-                    if (buffer.length == 0)
-                        yield break;
+                var fromCount = from + 1;
+                var toCount = to - 1;
+                var minToBuffer = Math.Min(fromCount, toCount);
+                buffer.BufferUpToCount(enumerator, minToBuffer);
+                if (buffer.length == 0)
+                    yield break;
 
-                    var reachedEnd = buffer.length < minToBuffer;
-                    if (!reachedEnd)
+                var reachedEnd = buffer.length < minToBuffer;
+                if (!reachedEnd)
+                {
+                    if (fromCount > toCount)
                     {
-                        if (fromCount > toCount)
-                        {
-                            var toSkip = fromCount - toCount;
-                            reachedEnd = toSkip != buffer.RotateUpToCount(enumerator, toSkip);
-                        }
-                        else if (toCount > fromCount)
-                        {
-                            count = toCount - fromCount;
-                            while (count > 0 && enumerator.MoveNext())
-                                --count;
-                            reachedEnd = count > 0;
-                        }
+                        var toSkip = fromCount - toCount;
+                        reachedEnd = toSkip != buffer.RotateUpToCount(enumerator, toSkip);
                     }
-                    count = buffer.length;
-                    if (!reachedEnd)
+                    else if (toCount > fromCount)
+                    {
+                        count = toCount - fromCount;
                         while (count > 0 && enumerator.MoveNext())
                             --count;
+                        reachedEnd = count > 0;
+                    }
                 }
-            }
-            else
-            {
-                count = PNNS(source, buffer, from, to, step);
+                count = buffer.length;
+                if (!reachedEnd)
+                    count -= enumerator.Skip(count);
             }
 
             if (count <= 0)
                 yield break;
 
-            var head = (buffer.length + buffer.head - 1) % buffer.length;
-            while (count-- > 0)
+            var head = (buffer.head - 1 + buffer.length) % buffer.length;
+            while (count > 0)
             {
-                yield return buffer.items[(head + buffer.length) % buffer.length];
-                head--;
-            }
-        }
-
-        private static int PNNS<T>(IEnumerable<T> source, DynamicRotativeBuffer<T> buffer, int from, int to, int step)
-        {
-            var offset = from % step;
-            var fromCount = from + 1;
-            var toCount = to - 1;
-            var bufferSpread = fromCount - offset;
-            using (var enumerator = source.GetEnumerator())
-            {
-                if (enumerator.Skip(offset) != offset)
-                    return 0;
-
-                bufferSpread = Math.Min(toCount, bufferSpread);
-                if (bufferSpread == 0)
-                    return 0;
-                if (!buffer.BufferWithStepUpToCount(enumerator, step, bufferSpread))
-                    return buffer.length;
-
-                int tmpIter;
-                if (fromCount > toCount)
-                {
-                    tmpIter = offset + bufferSpread;
-                    while (tmpIter < fromCount && enumerator.MoveNext())
-                    {
-                        if (tmpIter%step == offset)
-                        {
-                            buffer.head = buffer.head%buffer.length;
-                            buffer.items[buffer.head] = enumerator.Current;
-                            buffer.head++;
-                        }
-                        tmpIter++;
-                    }
-                    if (tmpIter < fromCount)
-                    {
-                        tmpIter = (tmpIter - bufferSpread - offset)%step;
-                        var max = (toCount + step - 1) / step;
-                        var minCount = (step - (toCount % step)) % step;
-
-                        return tmpIter > 0 && tmpIter <= minCount
-                            ? max - 1
-                            : max;
-                    }
-                }
-                else
-                {
-                    tmpIter = toCount - fromCount;
-                    if (enumerator.Skip(tmpIter) != tmpIter)
-                        return buffer.length;
-                }
-
-                bufferSpread = Math.Min(toCount, fromCount);
-                tmpIter = enumerator.Skip(bufferSpread);
-                return (step - 1 + bufferSpread - tmpIter)/step;
+                count -= step;
+                yield return buffer.items[head];
+                head = (head - step + buffer.length) % buffer.length;
             }
         }
 
@@ -368,43 +251,36 @@ namespace NSlice.Helpers
             from = -from;
             var buffer = new DynamicRotativeBuffer<T>();
             int count;
+
             var offset = 0;
             if (to.HasValue)
             {
                 var toValue = to.Value;
-                int length;
-                int tmp;
                 if (from >= toValue)
                 {
                     using (var enumerator = source.GetEnumerator())
                     {
                         buffer.BufferUpToCount(enumerator, toValue);
-                        var reachedEnd = buffer.length != toValue;
-                        if (reachedEnd)
+                        if (buffer.length != toValue)
                         {
-                            offset = (step - ((from - buffer.length)%step))%step;
-                            length = buffer.length - offset;
+                            offset = 0;
+                            count = buffer.length;
                         }
                         else
                         {
                             var toSkip = from - toValue;
-                            tmp = enumerator.Skip(toSkip);
-                            reachedEnd = tmp != toSkip;
-
-                            if (reachedEnd)
+                            if (toSkip != enumerator.Skip(toSkip))
                             {
-                                offset = (step - ((from - buffer.length - tmp) % step)) % step;
-                                length = buffer.length - offset;
+                                offset = 0;
+                                count = buffer.length;
                             }
                             else
                             {
-                                tmp = enumerator.Skip(toValue);
-                                length = toValue - tmp;
-                                offset = tmp;
+                                offset = enumerator.Skip(toValue);
+                                count = toValue - offset;
                             }
                         }
                     }
-                    count = length;
                 }
                 else
                 {
@@ -412,33 +288,25 @@ namespace NSlice.Helpers
                     {
                         buffer.BufferUpToCount(enumerator, from);
                         count = buffer.length;
-                        var reachedEnd = count != from;
-                        if (reachedEnd)
+                        if (count != from)
                         {
-                            offset = (step - ((from - count) % step)) % step;
-                            length = count - offset;
+                            offset = 0;
                         }
                         else
                         {
                             var toSkip = toValue - from;
-                            tmp = buffer.RotateUpToCount(enumerator, toSkip);
-                            reachedEnd = toSkip != tmp;
-
-                            if (reachedEnd)
+                            if (toSkip != buffer.RotateUpToCount(enumerator, toSkip))
                             {
                                 offset = 0;
-                                length = buffer.length;
+                                count = buffer.length;
                             }
                             else
                             {
-                                tmp = enumerator.Skip(from);
-                                length = from - tmp;
-                                offset = tmp;
+                                offset = enumerator.Skip(from);
+                                count = from - offset;
                             }
                         }
                     }
-
-                    count = length;
                 }
             }
             else
@@ -448,13 +316,9 @@ namespace NSlice.Helpers
                     buffer.BufferUpToCount(enumerator, from);
                     if (buffer.length == from)
                         buffer.RotateUntilEndWithCount(enumerator);
-                    else
-                    {
-                        offset = (step - ((from - buffer.length) % step)) % step;
-                    }
                 }
 
-                count = buffer.length - offset;
+                count = buffer.length;
             }
 
             if (count <= 0)
@@ -474,21 +338,12 @@ namespace NSlice.Helpers
             var buffer = new DynamicBuffer<T>();
             using (var enumerator = source.GetEnumerator())
             {
-                if (to.HasValue)
-                {
-                    var toValue = to.Value;
-                    while (toValue >= 0)
-                    {
-                        if (enumerator.MoveNext())
-                            --toValue;
-                        else
-                            yield break;
-                    }
-                }
+                if (to.HasValue && enumerator.Skip(to.Value + 1) != to.Value + 1)
+                    yield break;
                 buffer.Buffer(enumerator);
             }
 
-            from = buffer.length + from;
+            from += buffer.length;
             while (from >= 0)
             {
                 yield return buffer.items[from];
