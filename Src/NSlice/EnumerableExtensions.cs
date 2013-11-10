@@ -6,6 +6,9 @@ using NSlice.Helpers;
 
 namespace NSlice
 {
+    /// <summary>
+    /// Provides a set of static methods for objects that implement System.Collections.Generic.IEnumerable&lt;T&gt;.
+    /// </summary>
     public static class EnumerableExtensions
     {
         /// <summary>

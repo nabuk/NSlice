@@ -5,6 +5,9 @@ using NSlice.Helpers;
 
 namespace NSlice
 {
+    /// <summary>
+    /// Provides a set of static methods for System.String.
+    /// </summary>
     public static class StringExtensions
     {
         /// <summary>
