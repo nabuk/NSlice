@@ -90,7 +90,7 @@ namespace NSlicePerformanceTests.Tests.Cases
                 return PrepareTest(
                     "Get middle terce reversed",
                     ".Slice(-terce, terce, -1).First()", () => _collection.Slice(-terce, terce, -1).First(),
-                    ".Skip(terce).Reverse().Skip(terce).First()", () => _collection.Skip(terce).Reverse().Skip(terce).First());
+                    ".Skip(terce).Take(terce).Reverse().First()", () => _collection.Skip(terce).Take(terce).Reverse().First());
             }
         }
     }
