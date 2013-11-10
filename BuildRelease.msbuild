@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="CompleteBuild" ToolsVersion="4.0">
+    <PropertyGroup>
+        <XUnitPath>Lib\XunitRunnerMSBuild</XUnitPath>
+    </PropertyGroup>
+    <UsingTask TaskName="xunitproject" AssemblyFile="$(XUnitPath)\xunit.runner.msbuild.dll" />
+	
+	<PropertyGroup>
+        <MSBuildExtensionsPath>Lib\MSBuildCommunityTasks</MSBuildExtensionsPath>
+    </PropertyGroup>
+	
+  <UsingTask TaskName="MSBuild.Community.Tasks.Zip" AssemblyFile="$(MSBuildExtensionsPath)\MSBuild.Community.Tasks.dll" />
+  
+  <ItemGroup>
+    <ProjectToBuild Include="src\*.sln" />
+  </ItemGroup>
+  <ItemGroup>
+        <BuildOutput Include="Src\NSlice\bin\Release\NSlice.dll" />
+		<BuildOutput Include="Src\NSlice\bin\Release\NSlice.xml" />
+  </ItemGroup>
+
+  <PropertyGroup>
+        <ReleaseFolder>Release</ReleaseFolder>
+  </PropertyGroup>
+
+  <!--Optional Clean targets-->
+  <Target Name="CleanAll" DependsOnTargets="CleanDebug;CleanRelease" />
+  
+  <Target Name="CleanDebug">
+    <MSBuild Projects="@(ProjectToBuild)" Targets="Clean" Properties="Configuration=Debug" />
+  </Target>
+  
+  <Target Name="CleanRelease">
+    <MSBuild Projects="@(ProjectToBuild)" Targets="Clean" Properties="Configuration=Release" />
+  </Target>
+  
+  <!--Build tasks-->
+  <Target Name="DeleteReleaseFolder">
+    <RemoveDir Directories="$(ReleaseFolder)" />
+  </Target>
+  
+  <Target Name="MakeReleaseFolder" DependsOnTargets="DeleteReleaseFolder">
+    <MakeDir Directories="$(ReleaseFolder)" Condition="!Exists($(ReleaseFolder))" />
+  </Target>
+  
+  <Target Name="Build" DependsOnTargets="MakeReleaseFolder">
+    <MSBuild Projects="@(ProjectToBuild)" Properties="Configuration=Release" />
+  </Target>
+
+  <Target Name="Test" DependsOnTargets="Build">
+        <xunitproject ProjectFile="Src\AllTests.xunit" />
+  </Target>
+  
+  <Target Name="CopyToReleaseFolder" DependsOnTargets="Build">
+        <Copy SourceFiles="@(BuildOutput)" DestinationFolder="$(ReleaseFolder)" />
+  </Target>
+  <Target Name="ZipReleaseFiles" DependsOnTargets="CopyToReleaseFolder">
+        <ItemGroup>
+            <FilesToZip Include="$(ReleaseFolder)\*.*" />
+        </ItemGroup>
+        <Zip Files="@(FilesToZip)"
+             WorkingDirectory="$(ReleaseFolder)"
+             ZipFileName="$(ReleaseFolder)\NSlice.zip" />
+    </Target>
+  <Target Name="CompleteBuild" DependsOnTargets="CleanAll;Build;Test;ZipReleaseFiles" />
+</Project>
