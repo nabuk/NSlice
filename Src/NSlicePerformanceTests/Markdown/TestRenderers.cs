@@ -46,7 +46,7 @@ namespace NSlicePerformanceTests.Markdown
                 IEnumerable<ITest> tests = new[] { testCase.Test };
                 if (testCase.Benchmark != null)
                     tests = tests.Concat(new[] {testCase.Benchmark});
-                return result.Add(tests.Select(t => t.ToMarkdown().NewLine()).AsUnorderedList());
+                return result.Add(tests.Select(t => t.ToMarkdown().NewLine()).AsLines());
             });
         }
     }
