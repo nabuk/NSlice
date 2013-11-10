@@ -19,108 +19,55 @@ namespace NSlice.Helpers
                 return result;
             }
 
-            var fromValue = from ?? (stepValue > 0 ? 0 : count - 1);
-
+            int fromValue, toValue;
             if (stepValue > 0)
             {
+                fromValue = from ?? 0;
+                toValue = to ?? count;
+
                 if (fromValue < 0)
                 {
                     fromValue += count;
                     if (fromValue < 0)
-                    {
-                        if (stepValue == 1)
-                            fromValue = 0;
-                        else
-                        {
-                            fromValue %= stepValue;
-                            if (fromValue < 0)
-                                fromValue += stepValue;
-                        }
-                    }
+                        fromValue = 0;
                 }
-
-                if (fromValue >= count)
-                {
-                    result.count = 0;
+                else if (fromValue >= count)
                     return result;
-                }
 
-                if (to.HasValue)
-                {
-                    var toValue = to.Value;
-                    if (toValue < 0)
-                    {
-                        toValue += count;
-                    }
+                if (toValue < 0)
+                    toValue += count;
+                if (toValue <= fromValue)
+                    return result;
+                if (toValue > count)
+                    toValue = count;
 
-                    if (toValue <= fromValue)
-                    {
-                        result.count = 0;
-                        return result;
-                    }
-                    if (toValue >= count)
-                    {
-                        result.count = (count - fromValue + stepValue - 1) / stepValue;
-                    }
-                    else
-                    {
-                        result.count = (toValue - fromValue + stepValue - 1) / stepValue;
-                    }
-                }
-                else
-                {
-                    result.count = (count - fromValue + stepValue - 1) / stepValue;
-                }
+                result.count = (toValue - fromValue + stepValue - 1) / stepValue;
             }
             else
             {
-                var absStep = -stepValue;
+                fromValue = from ?? count - 1;
+
                 if (fromValue < 0)
                 {
                     fromValue += count;
                     if (fromValue < 0)
-                    {
-                        result.count = 0;
                         return result;
-                    }
                 }
                 else if (fromValue >= count)
-                {
-                    var offset = fromValue % absStep;
-                    if (offset >= count)
-                    {
-                        result.count = 0;
-                        return result;
-                    }
+                    fromValue = count - 1;
 
-                    fromValue = ((count - offset - 1) / absStep) * absStep + offset;
-                }
+                if (to < 0)
+                    to += count;
 
-                if (to.HasValue)
-                {
-                    var toValue = to.Value;
-                    if (toValue < 0)
-                        toValue += count;
+                toValue = to ?? -1;
 
-                    if (toValue >= fromValue)
-                    {
-                        result.count = 0;
-                        return result;
-                    }
+                if (toValue < -1)
+                    toValue = -1;
+                else if (toValue >= fromValue)
+                    return result;
 
-                    if (toValue < 0)
-                    {
-                        result.count = (fromValue + absStep) / absStep;
-                    }
-                    else
-                    {
-                        result.count = (fromValue - toValue - 1 + absStep) / absStep;
-                    }
-                }
-                else
-                {
-                    result.count = (fromValue + absStep) / absStep;
-                }
+                var absStep = -stepValue;
+                result.count = (fromValue - toValue - 1 + absStep) / absStep;
             }
 
             result.from = fromValue;
