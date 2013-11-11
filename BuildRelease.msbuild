@@ -18,7 +18,10 @@
         <BuildOutput Include="Src\NSlice\bin\Release\NSlice.dll" />
 		<BuildOutput Include="Src\NSlice\bin\Release\NSlice.xml" />
   </ItemGroup>
-
+  <ItemGroup>
+	    <NuSpecFiles Include="NuGet\*.nuspec" />
+	    <NuGetPackageScripts Include="NuGet\*.ps1" />
+  </ItemGroup>
   <PropertyGroup>
         <ReleaseFolder>Release</ReleaseFolder>
   </PropertyGroup>
@@ -53,6 +56,7 @@
   
   <Target Name="CopyToReleaseFolder" DependsOnTargets="Build">
         <Copy SourceFiles="@(BuildOutput)" DestinationFolder="$(ReleaseFolder)" />
+		<Copy SourceFiles="@(NuGetPackageScripts)" DestinationFolder="$(ReleaseFolder)" />
   </Target>
   <Target Name="ZipReleaseFiles" DependsOnTargets="CopyToReleaseFolder">
         <ItemGroup>
@@ -62,5 +66,39 @@
              WorkingDirectory="$(ReleaseFolder)"
              ZipFileName="$(ReleaseFolder)\NSlice.zip" />
     </Target>
-  <Target Name="CompleteBuild" DependsOnTargets="CleanAll;Build;Test;ZipReleaseFiles" />
+    <Target Name="CreateTemporaryNuGetSpecFiles">
+        <PropertyGroup>
+            <NuGetOutputFolder>NuGetPackages</NuGetOutputFolder>
+        </PropertyGroup>
+        <RemoveDir Directories="$(NuGetOutputFolder)" />
+        <Copy SourceFiles="@(NuSpecFiles)" DestinationFolder="$(NuGetOutputFolder)">
+            <Output TaskParameter="CopiedFiles" ItemName="TempNuspecFiles" />
+        </Copy>
+    </Target>
+    <Target Name="NuGetPrepare" DependsOnTargets="CreateTemporaryNuGetSpecFiles;CopyToReleaseFolder" Outputs="%(TempNuspecFiles.Identity)">
+        <PropertyGroup>
+            <TempNuspecFilePath>%(TempNuspecFiles.FullPath)</TempNuspecFilePath>
+            <AssemblyFile>$(ReleaseFolder)\%(TempNuspecFiles.Filename).dll</AssemblyFile>
+        </PropertyGroup>
+        <GetAssemblyIdentity AssemblyFiles="$(AssemblyFile)">
+            <Output TaskParameter="Assemblies" ItemName="AssemblyInfo" />
+        </GetAssemblyIdentity>
+        <PropertyGroup>
+            <Version>%(AssemblyInfo.Version)</Version>
+            <SemanticVersion>$(Version.Substring(0, $(Version.LastIndexOf('.'))))</SemanticVersion>
+        </PropertyGroup>
+        <XmlPoke XmlInputPath="$(TempNuspecFilePath)"
+                 Query="//metadata/version"
+                 Value="$(SemanticVersion)" />
+        <XmlPoke XmlInputPath="$(TempNuspecFilePath)"
+                 Query="//metadata/dependencies/dependency[contains(@id, 'nslice')]/@version"
+                 Value="$(SemanticVersion)" />
+    </Target>
+    <Target Name="NuGetPack" DependsOnTargets="NuGetPrepare">
+        <Exec Command="Lib\NuGet\nuget.exe pack %(TempNuspecFiles.FullPath) -BasePath $(ReleaseFolder) -OutputDirectory $(NuGetOutputFolder)" />
+    </Target>
+    <Target Name="CleanTemporaryNuGetSpecFiles" DependsOnTargets="NuGetPack">
+        <Delete Files="@(TempNuspecFiles)" />
+    </Target>
+  <Target Name="CompleteBuild" DependsOnTargets="CleanAll;Build;Test;ZipReleaseFiles;CleanTemporaryNuGetSpecFiles" />
 </Project>
