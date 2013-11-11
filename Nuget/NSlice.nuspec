@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+    <metadata>
+        <id>NSlice</id>
+        <version>1.0</version>
+        <title>NSlice</title>
+        <authors>Jakub Niemyjski</authors>
+        <owners>Jakub Niemyjski</owners>
+		<summary>A .NET library designed to give you more flexibility in manipulating collections.</summary>
+        <description>A .NET library designed to give you more flexibility in manipulating collections, originally inspired by Python slicing feature.</description>
+        <projectUrl>https://github.com/nabuk/NSlice#readme</projectUrl>
+        <licenseUrl>https://github.com/nabuk/NSlice/blob/master/LICENSE.txt</licenseUrl>
+        <iconUrl>https://raw.github.com/nabuk/NSlice/master/Resources/project_icon.png</iconUrl>
+        <language>en-US</language>
+		<tags>nslice slice slicing</tags>
+    </metadata>
+    <files>
+        <file src="NSlice.dll" target="lib\net35" />
+        <file src="NSlice.XML" target="lib\net35" />
+    </files>
+</package>

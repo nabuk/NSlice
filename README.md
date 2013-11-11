@@ -1,6 +1,6 @@
 ##About NSlice
 
-NSlice is a free .NET library, designed to give you more flexibility in manipulating collections, originaly inspired by *Python slicing* feature.
+NSlice is a free .NET library, designed to give you more flexibility in manipulating collections, originally inspired by *Python slicing* feature.
 
 *(Jump straight to the [Cheat Sheet](https://github.com/nabuk/NSlice/wiki/Cheat-Sheet) if you want to see code samples right away.)*
 
