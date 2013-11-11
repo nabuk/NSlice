@@ -50,6 +50,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\GlobalAssemblyInfo.cs">
+      <Link>GlobalAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Helpers\ErrorFormatter.cs" />
     <Compile Include="Helpers\SliceExpectedResultCalculator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

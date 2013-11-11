@@ -43,6 +43,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\GlobalAssemblyInfo.cs">
+      <Link>GlobalAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Collections\ProxiedList.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="Helpers\DynamicBuffer.cs" />
