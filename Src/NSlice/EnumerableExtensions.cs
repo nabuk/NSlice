@@ -6,6 +6,9 @@ using NSlice.Helpers;
 
 namespace NSlice
 {
+    /// <summary>
+    /// Provides a set of static methods for objects that implement System.Collections.Generic.IEnumerable&lt;T&gt;.
+    /// </summary>
     public static class EnumerableExtensions
     {
         /// <summary>
@@ -63,22 +66,22 @@ namespace NSlice
                 {
                     if (toIsPositiveOrNull)
                     {
-                        return SliceCases.PPP(source, fromValue, to, step);
+                        return EnumerableSliceCases.PPP(source, fromValue, to, step);
                     }
                     else
                     {
-                        return SliceCases.PNP(source, fromValue, to.Value, step);
+                        return EnumerableSliceCases.PNP(source, fromValue, to.Value, step);
                     }
                 }
                 else
                 {
                     if (toIsPositiveOrNull)
                     {
-                        return SliceCases.NPP(source, fromValue, to, step);
+                        return EnumerableSliceCases.NPP(source, fromValue, to, step);
                     }
                     else
                     {
-                        return SliceCases.NNP(source, fromValue, to.Value, step);
+                        return EnumerableSliceCases.NNP(source, fromValue, to.Value, step);
                     }
                 }
             }
@@ -88,22 +91,22 @@ namespace NSlice
                 {
                     if (toIsPositiveOrNull)
                     {
-                        return SliceCases.PPN(source, fromValue, to, step);
+                        return EnumerableSliceCases.PPN(source, fromValue, to, step);
                     }
                     else
                     {
-                        return SliceCases.PNN(source, fromValue, to.Value, step);
+                        return EnumerableSliceCases.PNN(source, fromValue, to.Value, step);
                     }
                 }
                 else
                 {
                     if (toIsPositiveOrNull)
                     {
-                        return SliceCases.NPN(source, fromValue, to, step);
+                        return EnumerableSliceCases.NPN(source, fromValue, to, step);
                     }
                     else
                     {
-                        return SliceCases.NNN(source, fromValue, to.Value, step);
+                        return EnumerableSliceCases.NNN(source, fromValue, to.Value, step);
                     }
                 }
             }

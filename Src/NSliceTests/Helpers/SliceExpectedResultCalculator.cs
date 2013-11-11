@@ -12,6 +12,22 @@ namespace NSliceTests.Helpers
             var sanitizedTo = to;
             if (to < 0) sanitizedTo = length + to.Value;
             var toValue = sanitizedTo ?? (stepValue > 0 ? length : -1);
+            if (stepValue > 0)
+            {
+                if (fromValue < 0)
+                    fromValue = 0;
+                if (toValue > length)
+                    toValue = length;
+            }
+            else
+            {
+                if (fromValue >= length)
+                    fromValue = length - 1;
+                if (toValue < -1)
+                    toValue = -1;
+            }
+
+
             var expected = new List<int>();
             for (var i = fromValue; stepValue > 0 ? i < toValue : i > toValue; i += stepValue)
                 if (i >= 0 && i < length)
