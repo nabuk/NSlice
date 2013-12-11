@@ -49,7 +49,7 @@ namespace NSlice
         {
             if (source == null) throw new ArgumentNullException("source");
 
-            throw new NotImplementedException();
+            return ProxiedListCreator.GetSliceDelete(source, from, to, step);
         }
 
         /// <summary>

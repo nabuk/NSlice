@@ -5,10 +5,9 @@ namespace NSlice.Helpers
 {
     static class SliceIndexerCalculator
     {
-        internal static StepIndexer Calculate(int? from, int? to, int? step, int count)
+        internal static StepIndexer Calculate(int? from, int? to, int step, int count)
         {
-            var stepValue = step ?? 1;
-            if (stepValue == 0)
+            if (step == 0)
                 throw new ArgumentException("Step cannot be zero.");
 
             var result = new StepIndexer();
@@ -20,7 +19,7 @@ namespace NSlice.Helpers
             }
 
             int fromValue, toValue;
-            if (stepValue > 0)
+            if (step > 0)
             {
                 fromValue = from ?? 0;
                 toValue = to ?? count;
@@ -41,7 +40,7 @@ namespace NSlice.Helpers
                 if (toValue > count)
                     toValue = count;
 
-                result.count = (toValue - fromValue + stepValue - 1) / stepValue;
+                result.count = (toValue - fromValue + step - 1) / step;
             }
             else
             {
@@ -66,13 +65,24 @@ namespace NSlice.Helpers
                 else if (toValue >= fromValue)
                     return result;
 
-                var absStep = -stepValue;
+                var absStep = -step;
                 result.count = (fromValue - toValue - 1 + absStep) / absStep;
             }
 
             result.from = fromValue;
-            result.step = stepValue;
+            result.step = step;
             return result;
+        }
+
+        internal static StepIndexer Abs(StepIndexer stepIndexer)
+        {
+            if (stepIndexer.step < 0)
+            {
+                stepIndexer.step = -stepIndexer.step;
+                stepIndexer.from -= stepIndexer.step * stepIndexer.count;
+            }
+
+            return stepIndexer;
         }
     }
 }
