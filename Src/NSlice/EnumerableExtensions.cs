@@ -34,7 +34,7 @@ namespace NSlice
             {
                 var sourceList = source as IList<T>;
                 if (sourceList != null)
-                    return ProxiedListCreator.Create(sourceList, from, to, step);
+                    return ProxiedListCreator.GetSlice(sourceList, from, to, step);
             }
             
             {

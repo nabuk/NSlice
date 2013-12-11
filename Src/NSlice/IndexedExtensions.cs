@@ -27,7 +27,29 @@ namespace NSlice
             int step = 1)
         {
             if (source == null) throw new ArgumentNullException("source");
-            return ProxiedListCreator.Create(source, from, to, step);
+            return ProxiedListCreator.GetSlice(source, from, to, step);
+        }
+
+        /// <summary>
+        /// Performs deletion of specified slice.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of source.</typeparam>
+        /// <param name="source">Source collection.</param>
+        /// <param name="from">First item index to delete.</param>
+        /// <param name="to">Exclusive boundary.</param>
+        /// <param name="step">Increment index by.</param>
+        /// <exception cref="ArgumentNullException">source is null.</exception>
+        /// <exception cref="ArgumentException">step is equal to 0.</exception>
+        /// <returns>Result of slice deletion.</returns>
+        public static IList<T> SliceDelete<T>(
+            this IList<T> source,
+            int? from = null,
+            int? to = null,
+            int step = 1)
+        {
+            if (source == null) throw new ArgumentNullException("source");
+
+            throw new NotImplementedException();
         }
 
         /// <summary>
