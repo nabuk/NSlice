@@ -1,30 +1,27 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using NSlice.Indexers;
+using System.Linq;
+using System.Text;
 
 namespace NSlice.Collections
 {
-    class ProxiedList<T> : IList<T>
+    class ProxiedReadOnlyList<T> : IList<T>
     {
-        private readonly IList<T> _source;
-        private readonly int _from;
-        private readonly int _step;
-        private readonly int _count;
+        private readonly Func<int, T> _itemCallback;
+        protected readonly int _count;
 
-        public ProxiedList(IList<T> source, StepIndexer indexer)
+        public ProxiedReadOnlyList(Func<int, T> itemCallback, int count)
         {
-            _source = source;
-            _from = indexer.from;
-            _step = indexer.step;
-            _count = indexer.count;
+            this._itemCallback = itemCallback;
+            this._count = count;
         }
 
         #region IEnumerable<T>
         public IEnumerator<T> GetEnumerator()
         {
             for (var i = 0; i < _count; ++i)
-                yield return _source[_from + (i * _step)];
+                yield return _itemCallback(i);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -40,14 +37,14 @@ namespace NSlice.Collections
             {
                 if (index < 0 || index >= _count)
                     throw new IndexOutOfRangeException();
-                return _source[_from + (index * _step)];
+                return _itemCallback(index);
             }
             set { throw new NotSupportedException(); }
         }
 
         public int Count { get { return _count; } }
 
-        
+
         public bool IsReadOnly
         {
             get { return true; }
@@ -62,7 +59,7 @@ namespace NSlice.Collections
         {
             if (array == null) throw new ArgumentNullException("array");
             for (var index = 0; index < _count; ++index)
-                array[index + arrayIndex] = _source[_from + (index * _step)];
+                array[index + arrayIndex] = _itemCallback(index);
         }
 
         public int IndexOf(T item)
@@ -70,14 +67,14 @@ namespace NSlice.Collections
             if ((object)item == null)
             {
                 for (var index = 0; index < _count; ++index)
-                    if ((object)_source[_from + (index * _step)] == null)
+                    if ((object)_itemCallback(index) == null)
                         return index;
                 return -1;
             }
 
             var equalityComparer = EqualityComparer<T>.Default;
             for (var index = 0; index < _count; ++index)
-                if (equalityComparer.Equals(_source[_from + (index * _step)], item))
+                if (equalityComparer.Equals(_itemCallback(index), item))
                     return index;
             return -1;
         }

@@ -46,7 +46,7 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Collections\ProxiedList.cs" />
+    <Compile Include="Collections\ProxiedReadOnlyList.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="Helpers\DynamicBuffer.cs" />
     <Compile Include="Helpers\DynamicRotativeBuffer.cs" />
