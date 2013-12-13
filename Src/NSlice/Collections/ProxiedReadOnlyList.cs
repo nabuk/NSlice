@@ -1,27 +1,26 @@
-﻿using System;
+﻿using NSlice.Indexers;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace NSlice.Collections
 {
     class ProxiedReadOnlyList<T> : IList<T>
     {
-        private readonly Func<int, T> _itemCallback;
-        protected readonly int _count;
+        private readonly IItemIndexer<T> _itemIndexer;
+        private readonly int _count;
 
-        public ProxiedReadOnlyList(Func<int, T> itemCallback, int count)
+        public ProxiedReadOnlyList(IItemIndexer<T> itemIndexer)
         {
-            this._itemCallback = itemCallback;
-            this._count = count;
+            this._itemIndexer = itemIndexer;
+            this._count = itemIndexer.Count;
         }
 
         #region IEnumerable<T>
         public IEnumerator<T> GetEnumerator()
         {
-            for (var i = 0; i < _count; ++i)
-                yield return _itemCallback(i);
+            for (var i = 0; i < this._count; ++i)
+                yield return this._itemIndexer.GetItemAt(i);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -35,14 +34,14 @@ namespace NSlice.Collections
         {
             get
             {
-                if (index < 0 || index >= _count)
+                if (index < 0 || index >= this._count)
                     throw new IndexOutOfRangeException();
-                return _itemCallback(index);
+                return this._itemIndexer.GetItemAt(index);
             }
             set { throw new NotSupportedException(); }
         }
 
-        public int Count { get { return _count; } }
+        public int Count { get { return this._count; } }
 
 
         public bool IsReadOnly
@@ -58,23 +57,23 @@ namespace NSlice.Collections
         public void CopyTo(T[] array, int arrayIndex)
         {
             if (array == null) throw new ArgumentNullException("array");
-            for (var index = 0; index < _count; ++index)
-                array[index + arrayIndex] = _itemCallback(index);
+            for (var index = 0; index < this._count; ++index)
+                array[index + arrayIndex] = this._itemIndexer.GetItemAt(index);
         }
 
         public int IndexOf(T item)
         {
             if ((object)item == null)
             {
-                for (var index = 0; index < _count; ++index)
-                    if ((object)_itemCallback(index) == null)
+                for (var index = 0; index < this._count; ++index)
+                    if ((object)this._itemIndexer.GetItemAt(index) == null)
                         return index;
                 return -1;
             }
 
             var equalityComparer = EqualityComparer<T>.Default;
-            for (var index = 0; index < _count; ++index)
-                if (equalityComparer.Equals(_itemCallback(index), item))
+            for (var index = 0; index < this._count; ++index)
+                if (equalityComparer.Equals(this._itemIndexer.GetItemAt(index), item))
                     return index;
             return -1;
         }

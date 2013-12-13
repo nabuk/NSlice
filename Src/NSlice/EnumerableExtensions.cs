@@ -42,7 +42,7 @@ namespace NSlice
                 if (sourceCollection != null)
                 {
                     var count = sourceCollection.Count;
-                    var indexer = SliceIndexerCalculator.Calculate(from, to, step, count);
+                    var indexer = SlicePropertiesCalculator.Calculate(from, to, step, count);
                     from = indexer.from;
                     step = indexer.step;
                     count = indexer.count;

@@ -52,13 +52,17 @@
     <Compile Include="Helpers\DynamicRotativeBuffer.cs" />
     <Compile Include="Helpers\EnumeratorHelpers.cs" />
     <Compile Include="Helpers\ProxiedListCreator.cs" />
-    <Compile Include="Helpers\SliceIndexerCalculator.cs" />
+    <Compile Include="Helpers\SlicePropertiesCalculator.cs" />
     <Compile Include="IndexedExtensions.cs" />
-    <Compile Include="Indexers\StepIndexer.cs" />
+    <Compile Include="Indexers\IItemIndexer.cs" />
+    <Compile Include="Indexers\SliceDeleteItemIndexer.cs" />
+    <Compile Include="Indexers\SliceItemIndexer.cs" />
+    <Compile Include="Dto\SliceProperties.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helpers\EnumerableSliceCases.cs" />
     <Compile Include="StringExtensions.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

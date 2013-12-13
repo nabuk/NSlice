@@ -3,14 +3,14 @@ using NSlice.Indexers;
 
 namespace NSlice.Helpers
 {
-    static class SliceIndexerCalculator
+    static class SlicePropertiesCalculator
     {
-        internal static StepIndexer Calculate(int? from, int? to, int step, int count)
+        internal static SliceProperties Calculate(int? from, int? to, int step, int count)
         {
             if (step == 0)
                 throw new ArgumentException("Step cannot be zero.");
 
-            var result = new StepIndexer();
+            var result = new SliceProperties();
 
             if (count == 0)
             {
@@ -74,7 +74,7 @@ namespace NSlice.Helpers
             return result;
         }
 
-        internal static StepIndexer Abs(StepIndexer stepIndexer)
+        internal static SliceProperties Abs(SliceProperties stepIndexer)
         {
             if (stepIndexer.step < 0)
             {

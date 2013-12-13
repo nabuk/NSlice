@@ -28,7 +28,7 @@ namespace NSlice
         {
             if (source == null) throw new ArgumentNullException("source");
 
-            var indexer = SliceIndexerCalculator.Calculate(from, to, step, source.Length);
+            var indexer = SlicePropertiesCalculator.Calculate(from, to, step, source.Length);
             return Enumerable.Range(0, indexer.count)
                              .Select(i => indexer.from + (i * indexer.step))
                              .Aggregate(new StringBuilder(), (builder, i) => builder.Append(source[i]))
