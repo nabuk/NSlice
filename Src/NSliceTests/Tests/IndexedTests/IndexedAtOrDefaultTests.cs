@@ -12,7 +12,7 @@ namespace NSliceTests.Tests.IndexedTests
         [Theory, ClassData(typeof(AtOrDefaultTestCaseSource))]
         public void AtOrDefault_FromIndexedExtensions_ReturnsCorrectValues(int index, int length)
         {
-            var source = Enumerable.Range(0, length).ToList();
+            var source = Enumerable.Range(0, length).ToArray();
             var sut = IndexedExtensions.AtOrDefault(source, index);
             if (index < 0)
                 index = length + index;
@@ -31,7 +31,7 @@ namespace NSliceTests.Tests.IndexedTests
         [InlineData(-10, 6)]
         public void AtOrDefault_FromIndexedExtensions_GivenIndexOurOfRange_ReturnsDefaultValue_WhenExecutedOnValueCollection(int index, int length)
         {
-            var source = Enumerable.Range(0, length).ToList();
+            var source = Enumerable.Range(0, length).ToArray();
             Assert.Equal(default(int), IndexedExtensions.AtOrDefault(source, index));
         }
 
@@ -40,7 +40,7 @@ namespace NSliceTests.Tests.IndexedTests
         [InlineData(-10, 6)]
         public void AtOrDefault_FromIndexedExtensions_GivenIndexOurOfRange_ReturnsNull_WhenExecutedOnReferenceCollection(int index, int collectionLength)
         {
-            var source = Enumerable.Range(0, collectionLength).Select(x => x.ToString()).ToList();
+            var source = Enumerable.Range(0, collectionLength).Select(x => x.ToString()).ToArray();
             Assert.Equal(null, IndexedExtensions.AtOrDefault(source, index));
         }
     }
