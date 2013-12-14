@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Text;
 using NSlice.Helpers;
+using NSlice.Indexers;
+using NSlice.Collections;
 
 namespace NSlice
 {
@@ -28,10 +30,33 @@ namespace NSlice
         {
             if (source == null) throw new ArgumentNullException("source");
 
-            var indexer = SliceIndexerCalculator.Calculate(from, to, step, source.Length);
-            return Enumerable.Range(0, indexer.count)
-                             .Select(i => indexer.from + (i * indexer.step))
-                             .Aggregate(new StringBuilder(), (builder, i) => builder.Append(source[i]))
+            var indexer = new SliceItemIndexer<int>(new ProxiedReadOnlyList<int>(new RangeIndexer(0, source.Length)), from, to, step);
+            return Enumerable.Range(0, indexer.Count)
+                             .Aggregate(new StringBuilder(), (builder, i) => builder.Append(source[indexer.GetItemAt(i)]))
+                             .ToString();
+        }
+
+        /// <summary>
+        /// Performs deletion of specified slice.
+        /// </summary>
+        /// <param name="source">Source string.</param>
+        /// <param name="from">First character index to delete.</param>
+        /// <param name="to">Exclusive boundary.</param>
+        /// <param name="step">Increment index by.</param>
+        /// <exception cref="ArgumentNullException">source is null.</exception>
+        /// <exception cref="ArgumentException">step is equal to 0.</exception>
+        /// <returns>Result of slice deletion.</returns>
+        public static string SliceDelete(
+            this string source,
+            int? from = null,
+            int? to = null,
+            int step = 1)
+        {
+            if (source == null) throw new ArgumentNullException("source");
+
+            var indexer = new SliceDeleteItemIndexer<int>(new ProxiedReadOnlyList<int>(new RangeIndexer(0, source.Length)), from, to, step);
+            return Enumerable.Range(0, indexer.Count)
+                             .Aggregate(new StringBuilder(), (builder, i) => builder.Append(source[indexer.GetItemAt(i)]))
                              .ToString();
         }
 

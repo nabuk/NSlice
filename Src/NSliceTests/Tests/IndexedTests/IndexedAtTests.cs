@@ -12,7 +12,7 @@ namespace NSliceTests.Tests.IndexedTests
         [Theory, ClassData(typeof(AtOrDefaultTestCaseSource))]
         public void At_FromIndexedExtensions_ReturnsCorrectValues(int index, int length)
         {
-            var source = Enumerable.Range(0, length).ToList();
+            var source = Enumerable.Range(0, length).ToArray();
             var sut = IndexedExtensions.At(source, index);
             if (index < 0)
                 index = length + index;
@@ -31,7 +31,7 @@ namespace NSliceTests.Tests.IndexedTests
         [InlineData(-10, 6)]
         public void At_FromIndexedExtensions_GivenIndexOurOfRange_ThrowsIndexOurOfRangeException(int index, int length)
         {
-            var source = Enumerable.Range(0, length).ToList();
+            var source = Enumerable.Range(0, length).ToArray();
             Assert.Throws<IndexOutOfRangeException>(() => IndexedExtensions.At(source, index));
         }
     }

@@ -13,7 +13,7 @@ namespace NSliceTests.Tests.IndexedTests
         [Theory, ClassData(typeof(SliceTestCaseSource))]
         public void Slice_FromIndexedExtensions_ReturnsCorrectValues(int? from, int? to, int step, int length)
         {
-            var source = Enumerable.Range(0, length).ToList();
+            var source = Enumerable.Range(0, length).ToArray();
             var sut = IndexedExtensions.Slice(source, from, to, step).ToArray();
             var expected = SliceExpectedResultCalculator.Calculate(from, to, step, length);
 
@@ -25,7 +25,7 @@ namespace NSliceTests.Tests.IndexedTests
         [Fact]
         public void Slice_FromIndexedExtensions_GivenStepZero_ThrowsArgumentException()
         {
-            Assert.Throws<ArgumentException>(() => IndexedExtensions.Slice(Enumerable.Empty<int>().ToList(), step: 0));
+            Assert.Throws<ArgumentException>(() => IndexedExtensions.Slice(Enumerable.Empty<int>().ToArray(), step: 0));
         }
 
         [Fact]

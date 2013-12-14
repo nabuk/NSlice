@@ -40,7 +40,7 @@ namespace NSliceTests.Tests.EnumerableTests
         [Theory, ClassData(typeof(SliceTestCaseSource))]
         public void Slice_FromEnumerableExtensions_GivenListAsSource_ReturnsCorrectValues(int? from, int? to, int step, int length)
         {
-            var source = Enumerable.Range(0, length).ToList();
+            var source = Enumerable.Range(0, length).ToArray();
             var sut = EnumerableExtensions.Slice(source, from, to, step).ToArray();
             var expected = SliceExpectedResultCalculator.Calculate(from, to, step, length);
 

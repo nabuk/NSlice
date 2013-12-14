@@ -1,6 +1,6 @@
-﻿namespace NSlice.Indexers
+﻿namespace NSlice
 {
-    class StepIndexer
+    class SliceProperties
     {
         internal int from;
         internal int step;
