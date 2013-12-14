@@ -79,7 +79,7 @@ namespace NSlice.Helpers
             if (stepIndexer.step < 0)
             {
                 stepIndexer.step = -stepIndexer.step;
-                stepIndexer.from -= stepIndexer.step * stepIndexer.count;
+                stepIndexer.from -= stepIndexer.step * (stepIndexer.count - 1);
             }
 
             return stepIndexer;
