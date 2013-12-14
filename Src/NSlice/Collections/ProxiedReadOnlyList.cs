@@ -1,30 +1,26 @@
-﻿using System;
+﻿using NSlice.Indexers;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using NSlice.Indexers;
 
 namespace NSlice.Collections
 {
-    class ProxiedList<T> : IList<T>
+    class ProxiedReadOnlyList<T> : IList<T>
     {
-        private readonly IList<T> _source;
-        private readonly int _from;
-        private readonly int _step;
+        private readonly IItemIndexer<T> _itemIndexer;
         private readonly int _count;
 
-        public ProxiedList(IList<T> source, StepIndexer indexer)
+        public ProxiedReadOnlyList(IItemIndexer<T> itemIndexer)
         {
-            _source = source;
-            _from = indexer.from;
-            _step = indexer.step;
-            _count = indexer.count;
+            this._itemIndexer = itemIndexer;
+            this._count = itemIndexer.Count;
         }
 
         #region IEnumerable<T>
         public IEnumerator<T> GetEnumerator()
         {
-            for (var i = 0; i < _count; ++i)
-                yield return _source[_from + (i * _step)];
+            for (var i = 0; i < this._count; ++i)
+                yield return this._itemIndexer.GetItemAt(i);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -38,16 +34,16 @@ namespace NSlice.Collections
         {
             get
             {
-                if (index < 0 || index >= _count)
+                if (index < 0 || index >= this._count)
                     throw new IndexOutOfRangeException();
-                return _source[_from + (index * _step)];
+                return this._itemIndexer.GetItemAt(index);
             }
             set { throw new NotSupportedException(); }
         }
 
-        public int Count { get { return _count; } }
+        public int Count { get { return this._count; } }
 
-        
+
         public bool IsReadOnly
         {
             get { return true; }
@@ -61,23 +57,23 @@ namespace NSlice.Collections
         public void CopyTo(T[] array, int arrayIndex)
         {
             if (array == null) throw new ArgumentNullException("array");
-            for (var index = 0; index < _count; ++index)
-                array[index + arrayIndex] = _source[_from + (index * _step)];
+            for (var index = 0; index < this._count; ++index)
+                array[index + arrayIndex] = this._itemIndexer.GetItemAt(index);
         }
 
         public int IndexOf(T item)
         {
             if ((object)item == null)
             {
-                for (var index = 0; index < _count; ++index)
-                    if ((object)_source[_from + (index * _step)] == null)
+                for (var index = 0; index < this._count; ++index)
+                    if ((object)this._itemIndexer.GetItemAt(index) == null)
                         return index;
                 return -1;
             }
 
             var equalityComparer = EqualityComparer<T>.Default;
-            for (var index = 0; index < _count; ++index)
-                if (equalityComparer.Equals(_source[_from + (index * _step)], item))
+            for (var index = 0; index < this._count; ++index)
+                if (equalityComparer.Equals(this._itemIndexer.GetItemAt(index), item))
                     return index;
             return -1;
         }
