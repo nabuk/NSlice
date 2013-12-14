@@ -55,6 +55,7 @@
     <Compile Include="Helpers\SlicePropertiesCalculator.cs" />
     <Compile Include="IndexedExtensions.cs" />
     <Compile Include="Indexers\IItemIndexer.cs" />
+    <Compile Include="Indexers\RangeIndexer.cs" />
     <Compile Include="Indexers\SliceDeleteItemIndexer.cs" />
     <Compile Include="Indexers\SliceItemIndexer.cs" />
     <Compile Include="Dto\SliceProperties.cs" />

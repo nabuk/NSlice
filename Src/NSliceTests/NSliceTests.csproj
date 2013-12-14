@@ -68,6 +68,7 @@
     <Compile Include="Tests\IndexedTests\IndexedSliceTests.cs" />
     <Compile Include="Tests\StringTests\StringAtOrDefaultTests.cs" />
     <Compile Include="Tests\StringTests\StringAtTests.cs" />
+    <Compile Include="Tests\StringTests\StringSliceDeleteTests.cs" />
     <Compile Include="Tests\StringTests\StringSliceTests.cs" />
   </ItemGroup>
   <ItemGroup>
