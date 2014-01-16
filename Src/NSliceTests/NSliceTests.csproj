@@ -61,6 +61,7 @@
     <Compile Include="TestData\SliceTestCaseSource.cs" />
     <Compile Include="Tests\EnumerableTests\EnumerableAtOrDefaultTests.cs" />
     <Compile Include="Tests\EnumerableTests\EnumerableAtTests.cs" />
+    <Compile Include="Tests\EnumerableTests\EnumerableSliceDeleteTests.cs" />
     <Compile Include="Tests\EnumerableTests\EnumerableSliceTests.cs" />
     <Compile Include="Tests\IndexedTests\IndexedAtOrDefaultTests.cs" />
     <Compile Include="Tests\IndexedTests\IndexedAtTests.cs" />

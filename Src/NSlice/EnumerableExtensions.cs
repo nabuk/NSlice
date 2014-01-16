@@ -113,6 +113,26 @@ namespace NSlice
         }
 
         /// <summary>
+        /// Performs deletion of specified slice.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of source.</typeparam>
+        /// <param name="source">Source collection.</param>
+        /// <param name="from">First item index to delete.</param>
+        /// <param name="to">Exclusive boundary.</param>
+        /// <param name="step">Increment index by.</param>
+        /// <exception cref="ArgumentNullException">source is null.</exception>
+        /// <exception cref="ArgumentException">step is equal to 0.</exception>
+        /// <returns>Result of slice deletion.</returns>
+        public static IEnumerable<T> SliceDelete<T>(
+            this IEnumerable<T> source,
+            int? from = null,
+            int? to = null,
+            int step = 1)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Returns the element at a specified index in a sequence.
         /// Index can be negative, e.g. '-1' means last, '-2' means one before last and so on.
         /// </summary>
