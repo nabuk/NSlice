@@ -129,7 +129,88 @@ namespace NSlice
             int? to = null,
             int step = 1)
         {
-            throw new NotImplementedException();
+            if (source == null)
+                throw new ArgumentNullException("source");
+
+            {
+                var sourceList = source as IList<T>;
+                if (sourceList != null)
+                    return ProxiedListCreator.GetSliceDelete(sourceList, from, to, step);
+            }
+
+            {
+                var sourceCollection = source as ICollection;
+                if (sourceCollection != null)
+                {
+                    var count = sourceCollection.Count;
+                    var indexer = SlicePropertiesCalculator.Calculate(from, to, step, count);
+                    from = indexer.from;
+                    step = indexer.step;
+                    count = indexer.count;
+                    to = indexer.from + (step * count);
+                    if (to < 0)
+                        to = null;
+                    if (count == 0)
+                        return source;
+                }
+            }
+
+
+            if (step == 0)
+                throw new ArgumentException("Step cannot be zero.");
+            var fromValue = from ?? (step > 0 ? 0 : -1);
+            var toIsPositiveOrNull = !(to < 0);
+
+            if (step > 0)
+            {
+                if (fromValue >= 0)
+                {
+                    if (toIsPositiveOrNull)
+                    {
+                        return EnumerableSliceDeleteCases.PPP(source, fromValue, to, step);
+                    }
+                    else
+                    {
+                        return EnumerableSliceDeleteCases.PNP(source, fromValue, to.Value, step);
+                    }
+                }
+                else
+                {
+                    if (toIsPositiveOrNull)
+                    {
+                        return EnumerableSliceDeleteCases.NPP(source, fromValue, to, step);
+                    }
+                    else
+                    {
+                        return EnumerableSliceDeleteCases.NNP(source, fromValue, to.Value, step);
+                    }
+                }
+            }
+            else
+            {
+                if (fromValue >= 0)
+                {
+                    if (toIsPositiveOrNull)
+                    {
+                        return EnumerableSliceDeleteCases.PPN(source, fromValue, to, step);
+                    }
+                    else
+                    {
+                        return EnumerableSliceDeleteCases.PNN(source, fromValue, to.Value, step);
+                    }
+                }
+                else
+                {
+                    if (toIsPositiveOrNull)
+                    {
+                        return EnumerableSliceDeleteCases.NPN(source, fromValue, to, step);
+                    }
+                    else
+                    {
+                        return EnumerableSliceDeleteCases.NNN(source, fromValue, to.Value, step);
+                    }
+                }
+            }
         }
 
         /// <summary>
