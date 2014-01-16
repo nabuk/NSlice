@@ -54,6 +54,7 @@
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Helpers\ErrorFormatter.cs" />
+    <Compile Include="Helpers\LazyAssert.cs" />
     <Compile Include="Helpers\SliceDeleteExpectedResultCalculator.cs" />
     <Compile Include="Helpers\SliceExpectedResultCalculator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

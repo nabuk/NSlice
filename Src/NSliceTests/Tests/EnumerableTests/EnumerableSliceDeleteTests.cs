@@ -16,13 +16,12 @@ namespace NSliceTests.Tests.EnumerableTests
         public void SliceDelete_FromEnumerableExtensions_ReturnsCorrectValues(int? from, int? to, int step, int length)
         {
             var source = Enumerable.Range(0, length);
-            var sourceArray = source.ToArray();
             var sut = EnumerableExtensions.SliceDelete(source, from, to, step).ToArray();
             var expected = SliceDeleteExpectedResultCalculator.Calculate(from, to, step, length);
 
-            Assert.True(
+            LazyAssert.True(
                 expected.SequenceEqual(sut),
-                ErrorFormatter.FormatSliceDeleteResultError(sourceArray, from, to, step, expected, sut));
+                () => ErrorFormatter.FormatSliceDeleteResultError(source, from, to, step, expected, sut));
         }
 
         [Fact]
@@ -44,9 +43,9 @@ namespace NSliceTests.Tests.EnumerableTests
             var sut = EnumerableExtensions.SliceDelete(source, from, to, step).ToArray();
             var expected = SliceDeleteExpectedResultCalculator.Calculate(from, to, step, length);
 
-            Assert.True(
+            LazyAssert.True(
                 expected.SequenceEqual(sut),
-                ErrorFormatter.FormatSliceDeleteResultError(source, from, to, step, expected, sut));
+                () => ErrorFormatter.FormatSliceDeleteResultError(source, from, to, step, expected, sut));
         }
 
         [Theory, ClassData(typeof(SliceTestCaseSource))]
@@ -56,9 +55,9 @@ namespace NSliceTests.Tests.EnumerableTests
             var sut = EnumerableExtensions.SliceDelete(source, from, to, step).ToArray();
             var expected = SliceDeleteExpectedResultCalculator.Calculate(from, to, step, length);
 
-            Assert.True(
+            LazyAssert.True(
                 expected.SequenceEqual(sut),
-                ErrorFormatter.FormatSliceDeleteResultError(source, from, to, step, expected, sut));
+                () => ErrorFormatter.FormatSliceDeleteResultError(source, from, to, step, expected, sut));
         }
     }
 }
