@@ -361,7 +361,69 @@ namespace NSlice.Helpers
 
         internal static IEnumerable<T> PNP<T>(IEnumerable<T> source, int from, int to, int step)
         {
-            throw new NotImplementedException();
+            to = -to;
+            var head = 0;
+            DynamicBuffer<T> buffer;
+
+            using (var enumerator = source.GetEnumerator())
+            {
+                for (var i = 0; i < from; ++i)
+                    if (enumerator.MoveNext())
+                        yield return enumerator.Current;
+                    else
+                        yield break;
+
+                buffer = new DynamicBuffer<T>();
+                buffer.BufferUpToCount(enumerator, to);
+                if (buffer.length < to)
+                {
+                    for (var i = 0; i < buffer.length; ++i)
+                        yield return buffer.items[i];
+                    yield break;
+                }
+
+                if (step == 1)
+                {
+                    while (enumerator.MoveNext())
+                    {
+                        buffer.items[head] = enumerator.Current;
+                        head = (head + 1) % to;
+                    }
+                }
+                else
+                {
+                    bool continuation = true;
+                    while (continuation)
+                    {
+                        if (!enumerator.MoveNext())
+                            break;
+
+                        buffer.items[head] = enumerator.Current;
+                        head = (head + 1) % to;
+
+                        for (var i = 1; i < step; ++i)
+                        {
+                            if (enumerator.MoveNext())
+                            {
+                                yield return buffer.items[head];
+                                buffer.items[head] = enumerator.Current;
+                                head = (head + 1) % to;
+                            }
+                            else
+                            {
+                                continuation = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (var i = 0; i < to; ++i)
+            {
+                yield return buffer.items[head];
+                head = (head + 1) % to;
+            }
         }
 
         internal static IEnumerable<T> PNN<T>(IEnumerable<T> source, int from, int to, int step)
