@@ -166,7 +166,88 @@ namespace NSlice.Helpers
 
         internal static IEnumerable<T> NNP<T>(IEnumerable<T> source, int from, int to, int step)
         {
-            throw new NotImplementedException();
+            from = -from;
+            to = -to;
+
+            using (var enumerator = source.GetEnumerator())
+            {
+                if (to >= from)
+                {
+                    while (enumerator.MoveNext())
+                        yield return enumerator.Current;
+
+                    yield break;
+                }
+
+                var head = 0;
+                var buffer = new DynamicBuffer<T>();
+                buffer.BufferUpToCount(enumerator, from);
+
+                if (buffer.length < from)
+                {
+                    from = buffer.length;
+
+                    if (to >= from)
+                    {
+                        for (var i = 0; i < from; ++i)
+                            yield return buffer.items[i];
+
+                        yield break;
+                    }
+                }
+                else
+                {
+                    while (enumerator.MoveNext())
+                    {
+                        yield return buffer.items[head];
+                        buffer.items[head] = enumerator.Current;
+                        head = (head + 1) % from;
+                    }
+                }
+
+                if (step == 1)
+                {
+                    head = (head - to + from) % from;
+                    for (var i = 0; i < to; ++i)
+                    {
+                        yield return buffer.items[head];
+                        head = (head + 1) % from;
+                    }
+                }
+                else
+                {
+                    int rem;
+                    var iterations = Math.DivRem(from - to, step, out rem);
+
+                    for (var i = 0; i < iterations; ++i)
+                    {
+                        head = (head + 1) % from;
+
+                        for (int j = 1; j < step; ++j)
+                        {
+                            yield return buffer.items[head];
+                            head = (head + 1) % from;
+                        }
+                    }
+
+                    if (rem > 0)
+                    {
+                        head = (head + 1) % from;
+
+                        for (var j = 1; j < rem; ++j)
+                        {
+                            yield return buffer.items[head];
+                            head = (head + 1) % from;
+                        }
+                    }
+
+                    for (var i = 0; i < to; ++i)
+                    {
+                        yield return buffer.items[head];
+                        head = (head + 1) % from;
+                    }
+                }
+            }
         }
 
         internal static IEnumerable<T> NNN<T>(IEnumerable<T> source, int from, int to, int step)
