@@ -252,7 +252,111 @@ namespace NSlice.Helpers
 
         internal static IEnumerable<T> NNN<T>(IEnumerable<T> source, int from, int to, int step)
         {
-            throw new NotImplementedException();
+            from = -from;
+            to = -to;
+            step = -step;
+
+            using (var enumerator = source.GetEnumerator())
+            {
+                if (to <= from)
+                {
+                    while (enumerator.MoveNext())
+                        yield return enumerator.Current;
+
+                    yield break;
+                }
+
+                var head = 0;
+                var sliceLength = to - from;
+                var buffer = new DynamicBuffer<T>();
+
+                if (step == 1)
+                {
+                    var toBuffer = sliceLength + from - 1;
+                    buffer.BufferUpToCount(enumerator, toBuffer);
+                    if (buffer.length < toBuffer)
+                    {
+                        sliceLength = buffer.length - from + 1;
+                        if (sliceLength > 0)
+                            head += sliceLength;
+
+                        for (; head < buffer.length; ++head)
+                            yield return buffer.items[head];
+                    }
+                    else
+                    {
+                        while (enumerator.MoveNext())
+                        {
+                            yield return buffer.items[head];
+                            buffer.items[head] = enumerator.Current;
+                            head = (head + 1) % toBuffer;
+                        }
+
+                        head = (head + sliceLength) % toBuffer;
+                        for (var i = 1; i < from; ++i)
+                        {
+                            yield return buffer.items[head];
+                            head = (head + 1) % toBuffer;
+                        }
+                    }
+                }
+                else
+                {
+                    var parts = (sliceLength - 1) / step;
+                    var toBuffer = parts * step + from;
+                
+                    buffer.BufferUpToCount(enumerator, toBuffer);
+                    if (buffer.length < toBuffer)
+                    {
+                        sliceLength = buffer.length - from + 1;
+                        if (sliceLength <= 0)
+                            for (int i = 0; i < buffer.length; ++i)
+                                yield return buffer.items[i];
+                        else
+                        {
+                            parts = (sliceLength - 1) / step;
+                            toBuffer = parts * step + 1;
+                            for (int toReturn = sliceLength - toBuffer; head < toReturn; ++head)
+                                yield return buffer.items[head];
+
+                            ++head;
+                            for (var i = 0; i < parts; ++i, ++head)
+                                for (var j = 1; j < step; ++j)
+                                    yield return buffer.items[head++];
+
+                            for (; head < buffer.length; ++head)
+                                yield return buffer.items[head];
+                        }
+                    }
+                    else
+                    {
+                        while (enumerator.MoveNext())
+                        {
+                            yield return buffer.items[head];
+                            buffer.items[head] = enumerator.Current;
+                            head = (head + 1) % toBuffer;
+                        }
+
+                        head = (head + 1) % toBuffer;
+                        for (var i = 0; i < parts; ++i)
+                        {
+                            for (var j = 1; j < step; ++j)
+                            {
+                                yield return buffer.items[head];
+                                head = (head + 1) % toBuffer;
+                            }
+
+                            head = (head + 1) % toBuffer;
+                        }
+
+                        for (var i = 1; i < from; ++i)
+                        {
+                            yield return buffer.items[head];
+                            head = (head + 1) % toBuffer;
+                        }
+                    }
+                }
+            }
         }
 
         internal static IEnumerable<T> PNP<T>(IEnumerable<T> source, int from, int to, int step)
