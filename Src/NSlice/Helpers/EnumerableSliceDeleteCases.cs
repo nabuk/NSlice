@@ -447,103 +447,13 @@ namespace NSlice.Helpers
                 var buffer = new DynamicBuffer<T>();
                 var head = 0;
 
-                if (step == 1)
+                buffer.BufferUpToCount(enumerator, toCount);
+
+                if (fromCount > toCount)
                 {
-                    buffer.BufferUpToCount(enumerator, toCount);
-
-                    if (fromCount > toCount)
+                    if (buffer.length < toCount)
                     {
-                        if (buffer.length < toCount)
-                            yield break;
-
-                        for (int i = 0, b = fromCount - toCount; i < b; ++i)
-                            if (enumerator.MoveNext())
-                            {
-                                yield return buffer.items[head];
-                                buffer.items[head] = enumerator.Current;
-                                head = (head + 1) % toCount;
-                            }
-                            else
-                                yield break;
-
-                        for (var i = 0; i < toCount; ++i)
-                        {
-                            if (enumerator.MoveNext())
-                            {
-                                yield return buffer.items[head];
-                                buffer.items[head] = enumerator.Current;
-                                head = (head + 1) % toCount;
-                            }
-                            else
-                            {
-                                head = (head - i + toCount) % toCount;
-
-                                for (; i > 0; --i)
-                                {
-                                    yield return buffer.items[head];
-                                    head = (head + 1) % toCount;
-                                }
-
-                                yield break;
-                            }
-                        }
-
-                        for (var i = 0; i < toCount; ++i)
-                        {
-                            yield return buffer.items[head];
-                            head = (head + 1) % toCount;
-                        }
-
-                        while (enumerator.MoveNext())
-                            yield return enumerator.Current;
-                    }
-                    else
-                    {
-                        if (buffer.length < toCount)
-                        {
-                            for (var i = fromCount; i < buffer.length; ++i)
-                                yield return buffer.items[i];
-                            
-                            yield break;
-                        }
-
-                        for (; head < fromCount; ++head)
-                        {
-                            if (enumerator.MoveNext())
-                            {
-                                yield return buffer.items[head];
-                                buffer.items[head] = enumerator.Current;
-                            }
-                            else
-                            {
-                                var buffered = head;
-                                for (head = fromCount; head < toCount; ++head)
-                                    yield return buffer.items[head];
-
-                                for (head = 0; head < buffered; ++head)
-                                    yield return buffer.items[head];
-
-                                yield break;
-                            }
-                        }
-
-                        for (head = fromCount; head < toCount; ++head)
-                            yield return buffer.items[head];
-
-                        for (head = 0; head < fromCount; ++head)
-                            yield return buffer.items[head];
-
-                        while (enumerator.MoveNext())
-                            yield return enumerator.Current;
-                    }
-                }
-                else
-                {
-                    buffer.BufferUpToCount(enumerator, toCount);
-
-                    if (fromCount > toCount)
-                    {
-                        if (buffer.length < toCount)
+                        if (step != 1)
                         {
                             int rem;
                             var iterations = Math.DivRem(buffer.length, step, out rem);
@@ -557,18 +467,21 @@ namespace NSlice.Helpers
                             for (int i = 0, decStep = step - 1; i < iterations; ++i, ++head)
                                 for (var b = head + decStep; head < b; ++head)
                                     yield return buffer.items[head];
-
-                            yield break;
                         }
 
-                        for (int i = 0, b = fromCount - toCount; i < b; ++i)
-                            if (enumerator.MoveNext())
-                            {
-                                yield return buffer.items[head];
-                                buffer.items[head] = enumerator.Current;
-                                head = (head + 1) % toCount;
-                            }
-                            else
+                        yield break;
+                    }
+
+                    for (int i = 0, b = fromCount - toCount; i < b; ++i)
+                        if (enumerator.MoveNext())
+                        {
+                            yield return buffer.items[head];
+                            buffer.items[head] = enumerator.Current;
+                            head = (head + 1) % toCount;
+                        }
+                        else
+                        {
+                            if (step != 1)
                             {
                                 int rem;
                                 var iterations = Math.DivRem(toCount, step, out rem);
@@ -591,19 +504,22 @@ namespace NSlice.Helpers
                                     }
                                     head = (head + 1) % toCount;
                                 }
-
-                                yield break;
                             }
 
-                        for (var i = 0; i < toCount; ++i)
+                            yield break;
+                        }
+
+                    for (var i = 0; i < toCount; ++i)
+                    {
+                        if (enumerator.MoveNext())
                         {
-                            if (enumerator.MoveNext())
-                            {
-                                yield return buffer.items[head];
-                                buffer.items[head] = enumerator.Current;
-                                head = (head + 1) % toCount;
-                            }
-                            else
+                            yield return buffer.items[head];
+                            buffer.items[head] = enumerator.Current;
+                            head = (head + 1) % toCount;
+                        }
+                        else
+                        {
+                            if (step != 1)
                             {
                                 var orgHead = head;
                                 int rem;
@@ -628,30 +544,35 @@ namespace NSlice.Helpers
                                     head = (head + 1) % toCount;
                                 }
 
-                                head = (orgHead - i + toCount) % toCount;
-
-                                for (; i > 0; --i)
-                                {
-                                    yield return buffer.items[head];
-                                    head = (head + 1) % toCount;
-                                }
-
-                                yield break;
+                                head = orgHead;
                             }
-                        }
 
-                        for (var i = 0; i < toCount; ++i)
-                        {
-                            yield return buffer.items[head];
-                            head = (head + 1) % toCount;
-                        }
+                            head = (head - i + toCount) % toCount;
 
-                        while (enumerator.MoveNext())
-                            yield return enumerator.Current;
+                            for (; i > 0; --i)
+                            {
+                                yield return buffer.items[head];
+                                head = (head + 1) % toCount;
+                            }
+
+                            yield break;
+                        }
                     }
-                    else
+
+                    for (var i = 0; i < toCount; ++i)
                     {
-                        if (buffer.length < toCount)
+                        yield return buffer.items[head];
+                        head = (head + 1) % toCount;
+                    }
+
+                    while (enumerator.MoveNext())
+                        yield return enumerator.Current;
+                }
+                else
+                {
+                    if (buffer.length < toCount)
+                    {
+                        if (step != 1)
                         {
                             int rem;
                             var iterations = Math.DivRem(Math.Min(fromCount, buffer.length), step, out rem);
@@ -665,23 +586,27 @@ namespace NSlice.Helpers
                             for (int i = 0, decStep = step - 1; i < iterations; ++i, ++head)
                                 for (var b = head + decStep; head < b; ++head)
                                     yield return buffer.items[head];
-
-                            for (var i = fromCount; i < buffer.length; ++i)
-                                yield return buffer.items[i];
-
-                            yield break;
                         }
 
-                        for (; head < fromCount; ++head)
+                        for (var i = fromCount; i < buffer.length; ++i)
+                            yield return buffer.items[i];
+                            
+                        yield break;
+                    }
+
+                    for (; head < fromCount; ++head)
+                    {
+                        if (enumerator.MoveNext())
                         {
-                            if (enumerator.MoveNext())
+                            yield return buffer.items[head];
+                            buffer.items[head] = enumerator.Current;
+                        }
+                        else
+                        {
+                            var buffered = head;
+
+                            if (step != 1)
                             {
-                                yield return buffer.items[head];
-                                buffer.items[head] = enumerator.Current;
-                            }
-                            else
-                            {
-                                var buffered = head;
                                 int rem;
                                 var iterations = Math.DivRem(fromCount - head, step, out rem);
 
@@ -703,26 +628,26 @@ namespace NSlice.Helpers
                                     }
                                     head = (head + 1) % toCount;
                                 }
-
-                                for (head = fromCount; head < toCount; ++head)
-                                    yield return buffer.items[head];
-
-                                for (head = 0; head < buffered; ++head)
-                                    yield return buffer.items[head];
-
-                                yield break;
                             }
+
+                            for (head = fromCount; head < toCount; ++head)
+                                yield return buffer.items[head];
+
+                            for (head = 0; head < buffered; ++head)
+                                yield return buffer.items[head];
+
+                            yield break;
                         }
-
-                        for (head = fromCount; head < toCount; ++head)
-                            yield return buffer.items[head];
-
-                        for (head = 0; head < fromCount; ++head)
-                            yield return buffer.items[head];
-
-                        while (enumerator.MoveNext())
-                            yield return enumerator.Current;
                     }
+
+                    for (head = fromCount; head < toCount; ++head)
+                        yield return buffer.items[head];
+
+                    for (head = 0; head < fromCount; ++head)
+                        yield return buffer.items[head];
+
+                    while (enumerator.MoveNext())
+                        yield return enumerator.Current;
                 }
             }
         }
