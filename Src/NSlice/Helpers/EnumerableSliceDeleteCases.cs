@@ -659,7 +659,46 @@ namespace NSlice.Helpers
 
         internal static IEnumerable<T> NPN<T>(IEnumerable<T> source, int from, int? to, int step)
         {
-            throw new NotImplementedException();
+            var buffer = new DynamicBuffer<T>();
+            using (var enumerator = source.GetEnumerator())
+            {
+                if (to.HasValue)
+                {
+                    var toValue = to.Value;
+                    for (var i = 0; i <= toValue; ++i)
+                        if (enumerator.MoveNext())
+                            yield return enumerator.Current;
+                        else
+                            yield break;
+                }
+
+                buffer.Buffer(enumerator);
+            }
+
+            from = -from;
+            step = -step;
+
+            var sliceLength = Math.Max(buffer.length - from + 1, 0);
+
+            if (step != 1)
+            {
+                int rem;
+                var iterations = Math.DivRem(sliceLength, step, out rem);
+
+                var head = 0;
+                for (var b = rem - 1; head < b; ++head)
+                    yield return buffer.items[head];
+
+                if (rem > 0)
+                    ++head;
+
+                for (int i = 0, decStep = step - 1; i < iterations; ++i, ++head)
+                    for (var b = head + decStep; head < b; ++head)
+                        yield return buffer.items[head];
+            }
+
+            for (var i = sliceLength; i < buffer.length; ++i)
+                yield return buffer.items[i];
         }
     }
 }
