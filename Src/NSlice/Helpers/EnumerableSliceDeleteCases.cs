@@ -456,7 +456,7 @@ namespace NSlice.Helpers
                         if (buffer.length < toCount)
                             yield break;
 
-                        for (int i = 0, b = fromCount - toCount; i <= b; ++i)
+                        for (int i = 0, b = fromCount - toCount; i < b; ++i)
                             if (enumerator.MoveNext())
                             {
                                 yield return buffer.items[head];
@@ -465,6 +465,28 @@ namespace NSlice.Helpers
                             }
                             else
                                 yield break;
+
+                        for (var i = 0; i < toCount; ++i)
+                        {
+                            if (enumerator.MoveNext())
+                            {
+                                yield return buffer.items[head];
+                                buffer.items[head] = enumerator.Current;
+                                head = (head + 1) % toCount;
+                            }
+                            else
+                            {
+                                head = (head - i + toCount) % toCount;
+
+                                for (; i > 0; --i)
+                                {
+                                    yield return buffer.items[head];
+                                    head = (head + 1) % toCount;
+                                }
+
+                                yield break;
+                            }
+                        }
 
                         for (var i = 0; i < toCount; ++i)
                         {
@@ -517,7 +539,190 @@ namespace NSlice.Helpers
                 }
                 else
                 {
-                    throw new NotImplementedException();
+                    buffer.BufferUpToCount(enumerator, toCount);
+
+                    if (fromCount > toCount)
+                    {
+                        if (buffer.length < toCount)
+                        {
+                            int rem;
+                            var iterations = Math.DivRem(buffer.length, step, out rem);
+
+                            for (var b = rem - 1; head < b; ++head)
+                                yield return buffer.items[head];
+
+                            if (rem > 0)
+                                ++head;
+
+                            for (int i = 0, decStep = step - 1; i < iterations; ++i, ++head)
+                                for (var b = head + decStep; head < b; ++head)
+                                    yield return buffer.items[head];
+
+                            yield break;
+                        }
+
+                        for (int i = 0, b = fromCount - toCount; i < b; ++i)
+                            if (enumerator.MoveNext())
+                            {
+                                yield return buffer.items[head];
+                                buffer.items[head] = enumerator.Current;
+                                head = (head + 1) % toCount;
+                            }
+                            else
+                            {
+                                int rem;
+                                var iterations = Math.DivRem(toCount, step, out rem);
+
+                                for (var j = 1; j < rem; ++j)
+                                {
+                                    yield return buffer.items[head];
+                                    head = (head + 1) % toCount;
+                                }
+
+                                if (rem > 0)
+                                    head = (head + 1) % toCount;
+
+                                for (var j = 0; j < iterations; ++j)
+                                {
+                                    for (var k = 1; k < step; ++k)
+                                    {
+                                        yield return buffer.items[head];
+                                        head = (head + 1) % toCount;
+                                    }
+                                    head = (head + 1) % toCount;
+                                }
+
+                                yield break;
+                            }
+
+                        for (var i = 0; i < toCount; ++i)
+                        {
+                            if (enumerator.MoveNext())
+                            {
+                                yield return buffer.items[head];
+                                buffer.items[head] = enumerator.Current;
+                                head = (head + 1) % toCount;
+                            }
+                            else
+                            {
+                                var orgHead = head;
+                                int rem;
+                                var iterations = Math.DivRem(toCount - i, step, out rem);
+
+                                for (var j = 1; j < rem; ++j)
+                                {
+                                    yield return buffer.items[head];
+                                    head = (head + 1) % toCount;
+                                }
+
+                                if (rem > 0)
+                                    head = (head + 1) % toCount;
+
+                                for (var j = 0; j < iterations; ++j)
+                                {
+                                    for (var k = 1; k < step; ++k)
+                                    {
+                                        yield return buffer.items[head];
+                                        head = (head + 1) % toCount;
+                                    }
+                                    head = (head + 1) % toCount;
+                                }
+
+                                head = (orgHead - i + toCount) % toCount;
+
+                                for (; i > 0; --i)
+                                {
+                                    yield return buffer.items[head];
+                                    head = (head + 1) % toCount;
+                                }
+
+                                yield break;
+                            }
+                        }
+
+                        for (var i = 0; i < toCount; ++i)
+                        {
+                            yield return buffer.items[head];
+                            head = (head + 1) % toCount;
+                        }
+
+                        while (enumerator.MoveNext())
+                            yield return enumerator.Current;
+                    }
+                    else
+                    {
+                        if (buffer.length < toCount)
+                        {
+                            int rem;
+                            var iterations = Math.DivRem(Math.Min(fromCount, buffer.length), step, out rem);
+
+                            for (var b = rem - 1; head < b; ++head)
+                                yield return buffer.items[head];
+
+                            if (rem > 0)
+                                ++head;
+
+                            for (int i = 0, decStep = step - 1; i < iterations; ++i, ++head)
+                                for (var b = head + decStep; head < b; ++head)
+                                    yield return buffer.items[head];
+
+                            for (var i = fromCount; i < buffer.length; ++i)
+                                yield return buffer.items[i];
+
+                            yield break;
+                        }
+
+                        for (; head < fromCount; ++head)
+                        {
+                            if (enumerator.MoveNext())
+                            {
+                                yield return buffer.items[head];
+                                buffer.items[head] = enumerator.Current;
+                            }
+                            else
+                            {
+                                var buffered = head;
+                                int rem;
+                                var iterations = Math.DivRem(fromCount - head, step, out rem);
+
+                                for (var i = 1; i < rem; ++i)
+                                {
+                                    yield return buffer.items[head];
+                                    head = (head + 1) % toCount;
+                                }
+
+                                if (rem > 0)
+                                    head = (head + 1) % toCount;
+
+                                for (var i = 0; i < iterations; ++i)
+                                {
+                                    for (var j = 1; j < step; ++j)
+                                    {
+                                        yield return buffer.items[head];
+                                        head = (head + 1) % toCount;
+                                    }
+                                    head = (head + 1) % toCount;
+                                }
+
+                                for (head = fromCount; head < toCount; ++head)
+                                    yield return buffer.items[head];
+
+                                for (head = 0; head < buffered; ++head)
+                                    yield return buffer.items[head];
+
+                                yield break;
+                            }
+                        }
+
+                        for (head = fromCount; head < toCount; ++head)
+                            yield return buffer.items[head];
+
+                        for (head = 0; head < fromCount; ++head)
+                            yield return buffer.items[head];
+
+                        while (enumerator.MoveNext())
+                            yield return enumerator.Current;
+                    }
                 }
             }
         }
