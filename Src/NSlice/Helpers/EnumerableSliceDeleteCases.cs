@@ -664,7 +664,92 @@ namespace NSlice.Helpers
                 {
                     var toValue = to.Value;
 
-                    throw new NotImplementedException();
+                    buffer.BufferUpToCount(enumerator, from);
+
+                    if (step == 1)
+                    {
+                        var head = 0;
+
+                        if (buffer.length < from)
+                        {
+                            for (head = toValue; head < buffer.length; ++head)
+                                yield return buffer.items[head];
+
+                            yield break;
+                        }
+
+                        if (from > toValue)
+                        {
+                            for (var i = 0; i < toValue; ++i)
+                                if (enumerator.MoveNext())
+                                {
+                                    yield return buffer.items[i];
+                                    buffer.items[i] = enumerator.Current;
+                                }
+                                else
+                                {
+                                    for (head = toValue; head < from; ++head)
+                                        yield return buffer.items[head];
+
+                                    for (head = 0; head < i; ++head)
+                                        yield return buffer.items[head];
+
+                                    yield break;
+                                }
+
+                            for (head = toValue; head < from; ++head)
+                                yield return buffer.items[head];
+
+                            for (head = 0; head < toValue; ++head)
+                                yield return buffer.items[head];
+
+                            while (enumerator.MoveNext())
+                                yield return enumerator.Current;
+                        }
+                        else
+                        {
+                            for (var i = from; i < toValue; ++i)
+                                if (enumerator.MoveNext())
+                                {
+                                    yield return buffer.items[head];
+                                    buffer.items[head] = enumerator.Current;
+                                    head = (head + 1) % from;
+                                }
+                                else
+                                    yield break;
+
+                            for (var i = 0; i < from; ++i)
+                                if (enumerator.MoveNext())
+                                {
+                                    yield return buffer.items[head];
+                                    buffer.items[head] = enumerator.Current;
+                                    head = (head + 1) % from;
+                                }
+                                else
+                                {
+                                    head = (head - i + from) % from;
+                                    for (; i > 0; --i)
+                                    {
+                                        yield return buffer.items[head];
+                                        head = (head + 1) % from;
+                                    }
+                                    yield break;
+                                }
+
+                            for (var i = 0; i < from; ++i)
+                            {
+                                yield return buffer.items[head];
+                                head = (head + 1) % from;
+                            }
+
+                            while (enumerator.MoveNext())
+                                yield return enumerator.Current;
+                        }
+                    }
+                    else
+                    {
+                        throw new NotImplementedException();
+                    }
                 }
                 else
                 {
