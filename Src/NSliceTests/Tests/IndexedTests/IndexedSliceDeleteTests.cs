@@ -21,7 +21,7 @@ namespace NSliceTests.Tests.IndexedTests
 
             Assert.True(
                 expected.SequenceEqual(sut),
-                ErrorFormatter.FormatSliceResultError(source, from, to, step, expected, sut));
+                ErrorFormatter.FormatSliceDeleteResultError(source, from, to, step, expected, sut));
         }
 
         [Fact]

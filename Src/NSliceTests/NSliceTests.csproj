@@ -54,6 +54,7 @@
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Helpers\ErrorFormatter.cs" />
+    <Compile Include="Helpers\LazyAssert.cs" />
     <Compile Include="Helpers\SliceDeleteExpectedResultCalculator.cs" />
     <Compile Include="Helpers\SliceExpectedResultCalculator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="TestData\SliceTestCaseSource.cs" />
     <Compile Include="Tests\EnumerableTests\EnumerableAtOrDefaultTests.cs" />
     <Compile Include="Tests\EnumerableTests\EnumerableAtTests.cs" />
+    <Compile Include="Tests\EnumerableTests\EnumerableSliceDeleteTests.cs" />
     <Compile Include="Tests\EnumerableTests\EnumerableSliceTests.cs" />
     <Compile Include="Tests\IndexedTests\IndexedAtOrDefaultTests.cs" />
     <Compile Include="Tests\IndexedTests\IndexedAtTests.cs" />

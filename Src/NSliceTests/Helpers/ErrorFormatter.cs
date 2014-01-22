@@ -32,5 +32,23 @@ namespace NSliceTests.Helpers
                 RendertCollection(got),
                 RendertCollection(expected));
         }
+
+        public static string FormatSliceDeleteResultError<T>(
+            IEnumerable<T> source,
+            int? from,
+            int? to,
+            int? step,
+            IEnumerable<T> expected,
+            IEnumerable<T> got)
+        {
+            return string.Format(
+                "For {0}.SliceDelete({1}, {2}, {3}) got {4}, expected {5}",
+                RendertCollection(source),
+                RenderElement(from),
+                RenderElement(to),
+                RenderElement(step),
+                RendertCollection(got),
+                RendertCollection(expected));
+        }
     }
 }
