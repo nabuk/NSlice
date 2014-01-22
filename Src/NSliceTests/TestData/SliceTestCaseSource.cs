@@ -1,42 +1,29 @@
-﻿using System.Collections;
+﻿using NSliceTests.Dto;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace NSliceTests.TestData
 {
-    public class SliceTestCaseSource : IEnumerable<object[]>
+    public static class SliceTestCaseSource
     {
-        public IEnumerator<object[]> GetEnumerator()
+        public static IEnumerable<SliceTestCase> GenerateTestCases()
         {
-            var from = new object[]
-            {
-                1, 2, 3, 10, 11, 12, -1, -2, -3, -10, -11, -12, null
-            };
-            var to = new object[]
-            {
-                1, 2, 3, 10, 11, 12, -1, -2, -3, -10, -11, -12, null
-            };
-            var step = new object[]
-            {
-                1, 2, 3, -1, -2, -3
-            };
-            var length = new object[]
-            {
-                0, 1, 2, 3, 9, 10
-            };
+            var iteratorRange = Enumerable.Range(-12, 25).Select(x => (int?)x).Concat(new int?[] { null });
+            var stepRange = Enumerable.Range(1, 5).Concat(Enumerable.Range(-5, 5));
+            var lengthRange = Enumerable.Range(0, 13);
 
-            return
-                (from f in @from
-                 from t in to
-                 from s in step
-                 from l in length
-                 select new [] {f, t, s, l})
-                    .GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
+            return (from @from in iteratorRange
+                         from to in iteratorRange
+                         from step in stepRange
+                         from length in lengthRange
+                         select new SliceTestCase
+                         {
+                             From = @from,
+                             To = to,
+                             Step = step,
+                             Length = length
+                         });
         }
     }
 }

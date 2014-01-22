@@ -6,21 +6,25 @@ using NSliceTests.Helpers;
 using NSliceTests.TestData;
 using Xunit;
 using Xunit.Extensions;
+using NSliceTests.Tests.Base;
 
 namespace NSliceTests.Tests.EnumerableTests
 {
-    public class EnumerableSliceTests
+    public class EnumerableSliceTests : BaseSliceCaseTests
     {
-        [Theory, ClassData(typeof(SliceTestCaseSource))]
-        public void Slice_FromEnumerableExtensions_ReturnsCorrectValues(int? from, int? to, int step, int length)
+        [Fact]
+        public void Slice_FromEnumerableExtensions_ReturnsCorrectValues()
         {
-            var source = Enumerable.Range(0, length);
-            var sut = EnumerableExtensions.Slice(source, from, to, step).ToArray();
-            var expected = SliceExpectedResultCalculator.Calculate(from, to, step, length);
+            this.RunSliceTestCases((from, to, step, length) =>
+            {
+                var source = Enumerable.Range(0, length);
+                var sut = EnumerableExtensions.Slice(source, from, to, step).ToArray();
+                var expected = SliceExpectedResultCalculator.Calculate(from, to, step, length);
 
-            LazyAssert.True(
-                expected.SequenceEqual(sut),
-                () => ErrorFormatter.FormatSliceResultError(source, from, to, step, expected, sut));
+                LazyAssert.True(
+                    expected.SequenceEqual(sut),
+                    () => ErrorFormatter.FormatSliceResultError(source, from, to, step, expected, sut));
+            });
         }
 
         [Fact]
@@ -36,30 +40,34 @@ namespace NSliceTests.Tests.EnumerableTests
         }
 
 
-        [Theory, ClassData(typeof(SliceTestCaseSource))]
-        public void Slice_FromEnumerableExtensions_GivenListAsSource_ReturnsCorrectValues(int? from, int? to, int step, int length)
+        [Fact]
+        public void Slice_FromEnumerableExtensions_GivenListAsSource_ReturnsCorrectValues()
         {
-            var source = Enumerable.Range(0, length).ToArray();
-            var sut = EnumerableExtensions.Slice(source, from, to, step).ToArray();
-            var expected = SliceExpectedResultCalculator.Calculate(from, to, step, length);
+            this.RunSliceTestCases((from, to, step, length) =>
+            {
+                var source = Enumerable.Range(0, length).ToArray();
+                var sut = EnumerableExtensions.Slice(source, from, to, step).ToArray();
+                var expected = SliceExpectedResultCalculator.Calculate(from, to, step, length);
 
-            LazyAssert.True(
-                expected.SequenceEqual(sut),
-                () => ErrorFormatter.FormatSliceResultError(source, from, to, step, expected, sut));
+                LazyAssert.True(
+                    expected.SequenceEqual(sut),
+                    () => ErrorFormatter.FormatSliceResultError(source, from, to, step, expected, sut));
+            });
         }
 
-        [Theory, ClassData(typeof(SliceTestCaseSource))]
-        public void Slice_FromEnumerableExtensions_GivenCollectionAsSource_ReturnsCorrectValues(int? from, int? to, int step, int length)
+        [Fact]
+        public void Slice_FromEnumerableExtensions_GivenCollectionAsSource_ReturnsCorrectValues()
         {
-            var source = new Queue<int>(Enumerable.Range(0, length));
-            var sut = EnumerableExtensions.Slice(source, from, to, step).ToArray();
-            var expected = SliceExpectedResultCalculator.Calculate(from, to, step, length);
+            this.RunSliceTestCases((from, to, step, length) =>
+            {
+                var source = new Queue<int>(Enumerable.Range(0, length));
+                var sut = EnumerableExtensions.Slice(source, from, to, step).ToArray();
+                var expected = SliceExpectedResultCalculator.Calculate(from, to, step, length);
 
-            LazyAssert.True(
-                expected.SequenceEqual(sut),
-                () => ErrorFormatter.FormatSliceResultError(source, from, to, step, expected, sut));
+                LazyAssert.True(
+                    expected.SequenceEqual(sut),
+                    () => ErrorFormatter.FormatSliceResultError(source, from, to, step, expected, sut));
+            });
         }
-
-        
     }
 }
