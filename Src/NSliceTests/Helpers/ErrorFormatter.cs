@@ -19,7 +19,7 @@ namespace NSliceTests.Helpers
             IEnumerable<T> source,
             int? from,
             int? to,
-            int? step,
+            int step,
             IEnumerable<T> expected,
             IEnumerable<T> got)
         {
@@ -37,7 +37,7 @@ namespace NSliceTests.Helpers
             IEnumerable<T> source,
             int? from,
             int? to,
-            int? step,
+            int step,
             IEnumerable<T> expected,
             IEnumerable<T> got)
         {
@@ -49,6 +49,66 @@ namespace NSliceTests.Helpers
                 RenderElement(step),
                 RendertCollection(got),
                 RendertCollection(expected));
+        }
+
+        public static string FormatSliceDisposeError(
+            int? from,
+            int? to,
+            int step,
+            int length,
+            int disposeCallCount)
+        {
+            return string.Format("For [collection of length = {0}].Slice({1}, {2}, {3}) Dispose has been called {4} time(s).",
+                RenderElement(length),
+                RenderElement(from),
+                RenderElement(to),
+                RenderElement(step),
+                RenderElement(disposeCallCount));
+        }
+
+        public static string FormatSliceDeleteDisposeError(
+            int? from,
+            int? to,
+            int step,
+            int length,
+            int disposeCallCount)
+        {
+            return string.Format("For [collection of length = {0}].SliceDelete({1}, {2}, {3}) Dispose has been called {4} time(s).",
+                RenderElement(length),
+                RenderElement(from),
+                RenderElement(to),
+                RenderElement(step),
+                RenderElement(disposeCallCount));
+        }
+
+        public static string FormatSliceResetError(
+            int? from,
+            int? to,
+            int step,
+            int length,
+            int resetCallCount)
+        {
+            return string.Format("For [collection of length = {0}].Slice({1}, {2}, {3}) Reset has been called {4} time(s).",
+                RenderElement(length),
+                RenderElement(from),
+                RenderElement(to),
+                RenderElement(step),
+                RenderElement(resetCallCount));
+        }
+
+        public static string FormatSliceDeleteResetError(
+            int? from,
+            int? to,
+            int step,
+            int length,
+            int resetCallCount)
+        {
+            return string.Format("For [collection of length = {0}].SliceDelete({1}, {2}, {3}) Reset has been called {4} time(s).",
+                RenderElement(length),
+                RenderElement(from),
+                RenderElement(to),
+                RenderElement(step),
+                RenderElement(resetCallCount));
         }
     }
 }
