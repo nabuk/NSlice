@@ -28,6 +28,44 @@ namespace NSliceTests.Tests.EnumerableTests
         }
 
         [Fact]
+        public void Slice_FromEnumerableExtensions_CallsDisposeOnce()
+        {
+            this.RunSliceTestCases((from, to, step, length) =>
+            {
+                var sut = new EnumerableMock<int>(Enumerable.Range(0, length));
+                EnumerableExtensions.Slice(sut, from, to, step).Sum();
+
+                if (sut.Enumerators.Count > 0)
+                {
+                    var disposeCallCount = sut.Enumerators.Single().DisposeCallCount;
+
+                    LazyAssert.True(
+                        disposeCallCount == 1,
+                        () => ErrorFormatter.FormatSliceDisposeError(from, to, step, length, disposeCallCount));
+                }
+            });
+        }
+
+        [Fact]
+        public void Slice_FromEnumerableExtensions_DoesNotCallReset()
+        {
+            this.RunSliceTestCases((from, to, step, length) =>
+            {
+                var sut = new EnumerableMock<int>(Enumerable.Range(0, length));
+                EnumerableExtensions.Slice(sut, from, to, step).Sum();
+
+                if (sut.Enumerators.Count > 0)
+                {
+                    var resetCallCount = sut.Enumerators.Single().ResetCallCount;
+
+                    LazyAssert.True(
+                        resetCallCount == 0,
+                        () => ErrorFormatter.FormatSliceResetError(from, to, step, length, resetCallCount));
+                }
+            });
+        }
+
+        [Fact]
         public void Slice_FromEnumerableExtensions_GivenStepZero_ThrowsArgumentException()
         {
             Assert.Throws<ArgumentException>(() => EnumerableExtensions.Slice(Enumerable.Empty<int>(), step: 0));

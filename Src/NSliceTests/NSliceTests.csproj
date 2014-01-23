@@ -54,6 +54,8 @@
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Dto\SliceTestCase.cs" />
+    <Compile Include="Helpers\EnumerableMock.cs" />
+    <Compile Include="Helpers\EnumeratorMock.cs" />
     <Compile Include="Helpers\ErrorFormatter.cs" />
     <Compile Include="Helpers\LazyAssert.cs" />
     <Compile Include="Helpers\SliceDeleteExpectedResultCalculator.cs" />
