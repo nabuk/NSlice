@@ -20,14 +20,14 @@ It fits nicely into the LINQ model and could be even used to slice a stream, if 
 	var collection = new[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 	var result = collection.Slice(1, 9, 2); //result: { 1, 3, 5, 7 }
 
-**Note:**
-> Slice method has the following signature:  
-> `Slice(int? from = null, int? to = null, int step = 1)`   
-> All arguments are optional:
-> 
-> - `from` - start index
-> - `to` - exclusive boundary
-> - `step` - iteration step
+
+Slice method has the following signature:
+
+	Slice(int? from = null, int? to = null, int step = 1)   
+
+- `from` - start index
+- `to` - exclusive boundary
+- `step` - iteration step
 
 But there is more. Slice allows each argument to be negative. It might seem weird to use negative indices but they are really useful. What are negative indices? They just index the collection backwards, for example: `-1` means last, `-2` means one before last and so on. See the following two examples to grasp the idea:
 
@@ -35,6 +35,15 @@ But there is more. Slice allows each argument to be negative. It might seem weir
 
 - Get collection without first and last element: `Slice(1, -1)`
 
+##Download
+
+NSlice is available on [NuGet](http://www.nuget.org/packages/NSlice/).
+
 ##Documentation
 
 - [Wiki](https://github.com/nabuk/NSlice/wiki)
+- [Blog posts](http://geekswithblogs.net/nabuk/category/16548.aspx)
+
+##License
+
+NSlice is available under the MIT license. See LICENSE.txt for more information.

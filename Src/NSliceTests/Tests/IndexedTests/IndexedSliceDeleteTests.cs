@@ -1,6 +1,7 @@
 ﻿using NSlice;
 using NSliceTests.Helpers;
 using NSliceTests.TestData;
+using NSliceTests.Tests.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,18 +11,23 @@ using Xunit.Extensions;
 
 namespace NSliceTests.Tests.IndexedTests
 {
-    public class IndexedSliceDeleteTests
+    public class IndexedSliceDeleteTests : BaseSliceCaseTests
     {
-        [Theory, ClassData(typeof(SliceTestCaseSource))]
-        public void SliceDelete_FromIndexedExtensions_ReturnsCorrectValues(int? from, int? to, int step, int length)
-        {
-            var source = Enumerable.Range(0, length).ToArray();
-            var sut = IndexedExtensions.SliceDelete(source, from, to, step).ToArray();
-            var expected = SliceDeleteExpectedResultCalculator.Calculate(from, to, step, length);
+        private const string sliceDeleteResultErrorFormat = "For {0}.SliceDelete({1}, {2}, {3}) got {4}, expected {5}";
 
-            Assert.True(
-                expected.SequenceEqual(sut),
-                ErrorFormatter.FormatSliceResultError(source, from, to, step, expected, sut));
+        [Fact]
+        public void SliceDelete_FromIndexedExtensions_ReturnsCorrectValues()
+        {
+            this.RunSliceTestCases((from, to, step, length) =>
+            {
+                var source = Enumerable.Range(0, length).ToArray();
+                var sut = IndexedExtensions.SliceDelete(source, from, to, step).ToArray();
+                var expected = SliceDeleteExpectedResultCalculator.Calculate(from, to, step, length);
+
+                Assert.True(
+                    expected.SequenceEqual(sut),
+                    ErrorFormatter.Format(sliceDeleteResultErrorFormat, source, from, to, step, expected, sut));
+            });
         }
 
         [Fact]

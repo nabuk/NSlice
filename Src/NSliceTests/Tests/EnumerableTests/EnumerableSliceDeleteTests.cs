@@ -1,44 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using NSlice;
+﻿using NSlice;
 using NSliceTests.Helpers;
 using NSliceTests.TestData;
+using NSliceTests.Tests.Base;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Xunit;
 using Xunit.Extensions;
-using NSliceTests.Tests.Base;
 
 namespace NSliceTests.Tests.EnumerableTests
 {
-    public class EnumerableSliceTests : BaseSliceCaseTests
+    public class EnumerableSliceDeleteTests : BaseSliceCaseTests
     {
-        private const string sliceResultErrorFormat = "For {0}.Slice({1}, {2}, {3}) got {4}, expected {5}";
-        private const string sliceDisposeOnceErrorFormat = "For [collection of length = {0}].Slice({1}, {2}, {3}) Dispose has been called {4} time(s).";
-        private const string sliceExceptionsAreNotHandledErrorFormat = "For [collection of length = {0}].Slice({1}, {2}, {3}) exception has been handled but it shouldn't be.";
-        private const string sliceDoesntCallResetErrorFormat = "For [collection of length = {0}].Slice({1}, {2}, {3}) Reset has been called {4} time(s).";
+        private const string sliceDeleteResultErrorFormat = "For {0}.SliceDelete({1}, {2}, {3}) got {4}, expected {5}";
+        private const string sliceDeleteDisposeOnceErrorFormat = "For [collection of length = {0}].SliceDelete({1}, {2}, {3}) Dispose has been called {4} time(s).";
+        private const string sliceDeleteExceptionsAreNotHandledErrorFormat = "For [collection of length = {0}].SliceDelete({1}, {2}, {3}) exception has been handled but it shouldn't be.";
+        private const string sliceDeleteDoesntCallResetErrorFormat = "For [collection of length = {0}].SliceDelete({1}, {2}, {3}) Reset has been called {4} time(s).";
 
         [Fact]
-        public void Slice_FromEnumerableExtensions_ReturnsCorrectValues()
+        public void SliceDelete_FromEnumerableExtensions_ReturnsCorrectValues()
         {
             this.RunSliceTestCases((from, to, step, length) =>
             {
                 var source = Enumerable.Range(0, length);
-                var sut = EnumerableExtensions.Slice(source, from, to, step).ToArray();
-                var expected = SliceExpectedResultCalculator.Calculate(from, to, step, length);
+                var sut = EnumerableExtensions.SliceDelete(source, from, to, step).ToArray();
+                var expected = SliceDeleteExpectedResultCalculator.Calculate(from, to, step, length);
 
                 LazyAssert.True(
                     expected.SequenceEqual(sut),
-                    () => ErrorFormatter.Format(sliceResultErrorFormat, source, from, to, step, expected, sut));
+                    () => ErrorFormatter.Format(sliceDeleteResultErrorFormat, source, from, to, step, expected, sut));
             });
         }
 
         [Fact]
-        public void Slice_FromEnumerableExtensions_CallsDisposeOnce()
+        public void SliceDelete_FromEnumerableExtensions_CallsDisposeOnce()
         {
             this.RunSliceTestCases((from, to, step, length) =>
             {
                 var sut = new EnumerableMock<int>(Enumerable.Range(0, length));
-                EnumerableExtensions.Slice(sut, from, to, step).Sum();
+                EnumerableExtensions.SliceDelete(sut, from, to, step).Sum();
 
                 if (sut.Enumerators.Count > 0)
                 {
@@ -46,13 +47,13 @@ namespace NSliceTests.Tests.EnumerableTests
 
                     LazyAssert.True(
                         disposeCallCount == 1,
-                        () => ErrorFormatter.Format(sliceDisposeOnceErrorFormat, from, to, step, length, disposeCallCount));
+                        () => ErrorFormatter.Format(sliceDeleteDisposeOnceErrorFormat, from, to, step, length, disposeCallCount));
                 }
             });
         }
 
         [Fact]
-        public void Slice_FromEnumerableExtensions_CallsDisposeWhenExceptionWasThrownFromMoveNext()
+        public void SliceDelete_FromEnumerableExtensions_CallsDisposeWhenExceptionWasThrownFromMoveNext()
         {
             this.RunSliceTestCases((from, to, step, length) =>
             {
@@ -61,7 +62,7 @@ namespace NSliceTests.Tests.EnumerableTests
 
                 try
                 {
-                    EnumerableExtensions.Slice(sut, from, to, step).Sum();
+                    EnumerableExtensions.SliceDelete(sut, from, to, step).Sum();
                 }
                 catch (InvalidOperationException) { }
 
@@ -71,13 +72,13 @@ namespace NSliceTests.Tests.EnumerableTests
 
                     LazyAssert.True(
                         disposeCallCount == 1,
-                        () => ErrorFormatter.Format(sliceDisposeOnceErrorFormat, from, to, step, length, disposeCallCount));
+                        () => ErrorFormatter.Format(sliceDeleteDisposeOnceErrorFormat, from, to, step, length, disposeCallCount));
                 }
             });
         }
 
         [Fact]
-        public void Slice_FromEnumerableExtensions_CallsDisposeWhenExceptionWasThrownFromCurrent()
+        public void SliceDelete_FromEnumerableExtensions_CallsDisposeWhenExceptionWasThrownFromCurrent()
         {
             this.RunSliceTestCases((from, to, step, length) =>
             {
@@ -86,7 +87,7 @@ namespace NSliceTests.Tests.EnumerableTests
 
                 try
                 {
-                    EnumerableExtensions.Slice(sut, from, to, step).Sum();
+                    EnumerableExtensions.SliceDelete(sut, from, to, step).Sum();
                 }
                 catch (InvalidOperationException) { }
 
@@ -96,13 +97,13 @@ namespace NSliceTests.Tests.EnumerableTests
 
                     LazyAssert.True(
                         disposeCallCount == 1,
-                        () => ErrorFormatter.Format(sliceDisposeOnceErrorFormat, from, to, step, length, disposeCallCount));
+                        () => ErrorFormatter.Format(sliceDeleteDisposeOnceErrorFormat, from, to, step, length, disposeCallCount));
                 }
             });
         }
 
         [Fact]
-        public void Slice_FromEnumerableExtensions_DoesntHandleExceptions()
+        public void SliceDelete_FromEnumerableExtensions_DoesntHandleExceptions()
         {
             this.RunSliceTestCases((from, to, step, length) =>
             {
@@ -112,24 +113,24 @@ namespace NSliceTests.Tests.EnumerableTests
                 bool sut = false;
                 try
                 {
-                    EnumerableExtensions.Slice(collection, from, to, step).Sum();
+                    EnumerableExtensions.SliceDelete(collection, from, to, step).Sum();
                 }
                 catch (InvalidOperationException)
                 {
                     sut = true;
                 }
 
-                LazyAssert.True(sut == expected, () => ErrorFormatter.Format(sliceExceptionsAreNotHandledErrorFormat, from, to, step, length));
+                LazyAssert.True(sut == expected, () => ErrorFormatter.Format(sliceDeleteExceptionsAreNotHandledErrorFormat, from, to, step, length));
             });
         }
 
         [Fact]
-        public void Slice_FromEnumerableExtensions_DoesNotCallReset()
+        public void SliceDelete_FromEnumerableExtensions_DoesNotCallReset()
         {
             this.RunSliceTestCases((from, to, step, length) =>
             {
                 var sut = new EnumerableMock<int>(Enumerable.Range(0, length));
-                EnumerableExtensions.Slice(sut, from, to, step).Sum();
+                EnumerableExtensions.SliceDelete(sut, from, to, step).Sum();
 
                 if (sut.Enumerators.Count > 0)
                 {
@@ -137,21 +138,21 @@ namespace NSliceTests.Tests.EnumerableTests
 
                     LazyAssert.True(
                         resetCallCount == 0,
-                        () => ErrorFormatter.Format(sliceDoesntCallResetErrorFormat, from, to, step, length, resetCallCount));
+                        () => ErrorFormatter.Format(sliceDeleteDoesntCallResetErrorFormat, from, to, step, length, resetCallCount));
                 }
             });
         }
 
         [Fact]
-        public void Slice_FromEnumerableExtensions_GivenStepZero_ThrowsArgumentException()
+        public void SliceDelete_FromEnumerableExtensions_GivenStepZero_ThrowsArgumentException()
         {
-            Assert.Throws<ArgumentException>(() => EnumerableExtensions.Slice(Enumerable.Empty<int>(), step: 0));
+            Assert.Throws<ArgumentException>(() => EnumerableExtensions.SliceDelete(Enumerable.Empty<int>(), step: 0));
         }
 
         [Fact]
-        public void Slice_FromEnumerableExtensions_GivenNullSource_ThrowsArgumentNullException()
+        public void SliceDelete_FromEnumerableExtensions_GivenNullSource_ThrowsArgumentNullException()
         {
-            Assert.Throws<ArgumentNullException>(() => EnumerableExtensions.Slice<int>(null));
+            Assert.Throws<ArgumentNullException>(() => EnumerableExtensions.SliceDelete<int>(null));
         }
 
         [Fact]
@@ -160,12 +161,12 @@ namespace NSliceTests.Tests.EnumerableTests
             this.RunSliceTestCases((from, to, step, length) =>
             {
                 var source = Enumerable.Range(0, length).ToArray();
-                var sut = EnumerableExtensions.Slice(source, from, to, step).ToArray();
-                var expected = SliceExpectedResultCalculator.Calculate(from, to, step, length);
+                var sut = EnumerableExtensions.SliceDelete(source, from, to, step).ToArray();
+                var expected = SliceDeleteExpectedResultCalculator.Calculate(from, to, step, length);
 
                 LazyAssert.True(
                     expected.SequenceEqual(sut),
-                    () => ErrorFormatter.Format(sliceResultErrorFormat, source, from, to, step, expected, sut));
+                    () => ErrorFormatter.Format(sliceDeleteResultErrorFormat, source, from, to, step, expected, sut));
             });
         }
 
@@ -175,12 +176,12 @@ namespace NSliceTests.Tests.EnumerableTests
             this.RunSliceTestCases((from, to, step, length) =>
             {
                 var source = new Queue<int>(Enumerable.Range(0, length));
-                var sut = EnumerableExtensions.Slice(source, from, to, step).ToArray();
-                var expected = SliceExpectedResultCalculator.Calculate(from, to, step, length);
+                var sut = EnumerableExtensions.SliceDelete(source, from, to, step).ToArray();
+                var expected = SliceDeleteExpectedResultCalculator.Calculate(from, to, step, length);
 
                 LazyAssert.True(
                     expected.SequenceEqual(sut),
-                    () => ErrorFormatter.Format(sliceResultErrorFormat, source, from, to, step, expected, sut));
+                    () => ErrorFormatter.Format(sliceDeleteResultErrorFormat, source, from, to, step, expected, sut));
             });
         }
     }
