@@ -79,8 +79,8 @@ namespace NSlice.Helpers
                 else
                     count = from + 1;
                 buffer.BufferUpToCount(enumerator, count);
-                count = buffer.length;
             }
+            count = buffer.length;
             --count;
             while (count >= 0)
             {
