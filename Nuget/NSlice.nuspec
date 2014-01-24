@@ -2,15 +2,15 @@
 <package>
     <metadata>
         <id>NSlice</id>
-        <version>1.1.0</version>
+        <version>1.2.0</version>
         <title>NSlice</title>
         <authors>Jakub Niemyjski</authors>
         <owners>Jakub Niemyjski</owners>
 		<summary>A .NET library designed to give you more flexibility in manipulating collections.</summary>
         <description>A .NET library designed to give you more flexibility in manipulating collections, originally inspired by Python slicing feature.</description>
-		<releaseNotes>(v1.1) SliceDelete extension was implemented (for indexed collections and strings).</releaseNotes>
+		<releaseNotes>(v1.2) SliceDelete extension for enumerable types.</releaseNotes>
         <projectUrl>https://github.com/nabuk/NSlice#readme</projectUrl>
-        <licenseUrl>https://github.com/nabuk/NSlice/blob/master/LICENSE.txt</licenseUrl>
+        <licenseUrl>https://raw.github.com/nabuk/NSlice/master/LICENSE.txt</licenseUrl>
         <iconUrl>https://raw.github.com/nabuk/NSlice/master/Resources/project_icon.png</iconUrl>
         <language>en-US</language>
 		<tags>nslice slice slicing</tags>
