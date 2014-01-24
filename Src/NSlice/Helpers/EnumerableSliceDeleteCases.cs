@@ -152,7 +152,10 @@ namespace NSlice.Helpers
             from = -from;
             to = -to;
 
-            using (var enumerator = source.GetEnumerator())
+            var enumerator = source.GetEnumerator();
+            bool disposed = false;
+
+            try
             {
                 if (to >= from)
                 {
@@ -172,6 +175,9 @@ namespace NSlice.Helpers
 
                     if (to >= from)
                     {
+                        enumerator.Dispose();
+                        disposed = true;
+
                         for (var i = 0; i < from; ++i)
                             yield return buffer.items[i];
 
@@ -187,6 +193,9 @@ namespace NSlice.Helpers
                         head = (head + 1) % from;
                     }
                 }
+
+                enumerator.Dispose();
+                disposed = true;
 
                 if (step == 1)
                 {
@@ -231,6 +240,11 @@ namespace NSlice.Helpers
                     }
                 }
             }
+            finally
+            {
+                if (!disposed)
+                    enumerator.Dispose();
+            }
         }
 
         internal static IEnumerable<T> NNN<T>(IEnumerable<T> source, int from, int to, int step)
@@ -239,7 +253,10 @@ namespace NSlice.Helpers
             to = -to;
             step = -step;
 
-            using (var enumerator = source.GetEnumerator())
+            var enumerator = source.GetEnumerator();
+            bool disposed = false;
+
+            try
             {
                 if (to <= from)
                 {
@@ -259,6 +276,9 @@ namespace NSlice.Helpers
                     buffer.BufferUpToCount(enumerator, toBuffer);
                     if (buffer.length < toBuffer)
                     {
+                        enumerator.Dispose();
+                        disposed = true;
+
                         sliceLength = buffer.length - from + 1;
                         if (sliceLength > 0)
                             head += sliceLength;
@@ -275,6 +295,9 @@ namespace NSlice.Helpers
                             head = (head + 1) % toBuffer;
                         }
 
+                        enumerator.Dispose();
+                        disposed = true;
+
                         head = (head + sliceLength) % toBuffer;
                         for (var i = 1; i < from; ++i)
                         {
@@ -287,10 +310,13 @@ namespace NSlice.Helpers
                 {
                     var parts = (sliceLength - 1) / step;
                     var toBuffer = parts * step + from;
-                
+
                     buffer.BufferUpToCount(enumerator, toBuffer);
                     if (buffer.length < toBuffer)
                     {
+                        enumerator.Dispose();
+                        disposed = true;
+
                         sliceLength = buffer.length - from + 1;
                         if (sliceLength <= 0)
                             for (int i = 0; i < buffer.length; ++i)
@@ -320,6 +346,9 @@ namespace NSlice.Helpers
                             head = (head + 1) % toBuffer;
                         }
 
+                        enumerator.Dispose();
+                        disposed = true;
+
                         head = (head + 1) % toBuffer;
                         for (var i = 0; i < parts; ++i)
                         {
@@ -340,6 +369,11 @@ namespace NSlice.Helpers
                     }
                 }
             }
+            finally
+            {
+                if (!disposed)
+                    enumerator.Dispose();
+            }
         }
 
         internal static IEnumerable<T> PNP<T>(IEnumerable<T> source, int from, int to, int step)
@@ -348,7 +382,10 @@ namespace NSlice.Helpers
             var head = 0;
             DynamicBuffer<T> buffer;
 
-            using (var enumerator = source.GetEnumerator())
+            var enumerator = source.GetEnumerator();
+            bool disposed = false;
+
+            try
             {
                 for (var i = 0; i < from; ++i)
                     if (enumerator.MoveNext())
@@ -360,6 +397,9 @@ namespace NSlice.Helpers
                 buffer.BufferUpToCount(enumerator, to);
                 if (buffer.length < to)
                 {
+                    enumerator.Dispose();
+                    disposed = true;
+
                     for (var i = 0; i < buffer.length; ++i)
                         yield return buffer.items[i];
                     yield break;
@@ -401,6 +441,11 @@ namespace NSlice.Helpers
                     }
                 }
             }
+            finally
+            {
+                if (!disposed)
+                    enumerator.Dispose();
+            }
 
             for (var i = 0; i < to; ++i)
             {
@@ -417,7 +462,10 @@ namespace NSlice.Helpers
             var fromCount = from + 1;
             var toCount = to - 1;
 
-            using (var enumerator = source.GetEnumerator())
+            var enumerator = source.GetEnumerator();
+            bool disposed = false;
+
+            try
             {
                 if (to == 1)
                 {
@@ -436,6 +484,9 @@ namespace NSlice.Helpers
                 {
                     if (buffer.length < toCount)
                     {
+                        enumerator.Dispose();
+                        disposed = true;
+
                         if (step != 1)
                         {
                             int rem;
@@ -464,6 +515,9 @@ namespace NSlice.Helpers
                         }
                         else
                         {
+                            enumerator.Dispose();
+                            disposed = true;
+
                             if (step != 1)
                             {
                                 int rem;
@@ -502,6 +556,9 @@ namespace NSlice.Helpers
                         }
                         else
                         {
+                            enumerator.Dispose();
+                            disposed = true;
+
                             if (step != 1)
                             {
                                 var orgHead = head;
@@ -555,6 +612,9 @@ namespace NSlice.Helpers
                 {
                     if (buffer.length < toCount)
                     {
+                        enumerator.Dispose();
+                        disposed = true;
+
                         if (step != 1)
                         {
                             int rem;
@@ -586,6 +646,9 @@ namespace NSlice.Helpers
                         }
                         else
                         {
+                            enumerator.Dispose();
+                            disposed = true;
+
                             var buffered = head;
 
                             if (step != 1)
@@ -633,6 +696,11 @@ namespace NSlice.Helpers
                         yield return enumerator.Current;
                 }
             }
+            finally
+            {
+                if (!disposed)
+                    enumerator.Dispose();
+            }
         }
 
         internal static IEnumerable<T> NPP<T>(IEnumerable<T> source, int from, int? to, int step)
@@ -640,7 +708,10 @@ namespace NSlice.Helpers
             from = -from;
             var head = 0;
 
-            using (var enumerator = source.GetEnumerator())
+            var enumerator = source.GetEnumerator();
+            bool disposed = false;
+
+            try
             {
                 var buffer = new DynamicBuffer<T>();
 
@@ -652,6 +723,9 @@ namespace NSlice.Helpers
 
                     if (buffer.length < from)
                     {
+                        enumerator.Dispose();
+                        disposed = true;
+
                         if (step > 1)
                         {
                             int rem;
@@ -686,6 +760,9 @@ namespace NSlice.Helpers
                             }
                             else
                             {
+                                enumerator.Dispose();
+                                disposed = true;
+
                                 if (step > 1)
                                 {
                                     int rem;
@@ -733,6 +810,9 @@ namespace NSlice.Helpers
                             }
                             else
                             {
+                                enumerator.Dispose();
+                                disposed = true;
+
                                 if (step > 1)
                                 {
                                     int rem;
@@ -769,6 +849,9 @@ namespace NSlice.Helpers
                             }
                             else
                             {
+                                enumerator.Dispose();
+                                disposed = true;
+
                                 if (step > 1)
                                 {
                                     int rem;
@@ -837,6 +920,9 @@ namespace NSlice.Helpers
 
                         if (buffer.length < from)
                         {
+                            enumerator.Dispose();
+                            disposed = true;
+
                             iterations = Math.DivRem(buffer.length, step, out rem);
 
                             for (int i = 0, decStep = step - 1; i < iterations; ++i)
@@ -860,6 +946,9 @@ namespace NSlice.Helpers
                                 head = (head + 1) % from;
                             }
 
+                            enumerator.Dispose();
+                            disposed = true;
+
                             iterations = Math.DivRem(buffer.length, step, out rem);
 
                             for (var i = 0; i < iterations; ++i)
@@ -882,6 +971,11 @@ namespace NSlice.Helpers
                         }
                     }
                 }
+            }
+            finally
+            {
+                if (!disposed)
+                    enumerator.Dispose();
             }
         }
 
