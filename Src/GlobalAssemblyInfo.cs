@@ -2,7 +2,7 @@ using System.Reflection;
 
 [assembly: AssemblyProduct("NSlice")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyCopyright("Copyright © Jakub Niemyjski 2013")]
+[assembly: AssemblyCopyright("Copyright © Jakub Niemyjski 2013-2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -12,5 +12,5 @@ using System.Reflection;
 [assembly: AssemblyConfiguration("Release")]
 #endif
 
-[assembly: AssemblyVersion("1.1.0.0")]
-[assembly: AssemblyFileVersion("1.1.0.0")]
+[assembly: AssemblyVersion("1.2.0.0")]
+[assembly: AssemblyFileVersion("1.2.0.0")]
