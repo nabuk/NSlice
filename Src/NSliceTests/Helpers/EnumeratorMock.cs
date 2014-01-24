@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,45 +8,52 @@ namespace NSliceTests.Helpers
 {
     public class EnumeratorMock<T> : IEnumerator<T>
     {
-        private readonly IEnumerator<T> source;
+        public readonly IEnumerator<T> enumerator;
 
-        public EnumeratorMock(IEnumerator<T> source)
+        public EnumeratorMock(IEnumerator<T> enumerator)
         {
-            this.source = source;
+            this.enumerator = enumerator;
+
+            this.MoveNext = this.enumerator.MoveNext;
+            this.Current = () => this.enumerator.Current;
         }
+
+        public Func<bool> MoveNext { get; set; }
+
+        public Func<T> Current { get; set; }
 
         public int DisposeCallCount { get; private set; }
 
         public int ResetCallCount { get; private set; }
 
         #region IEnumerator
-        public T Current
+        T IEnumerator<T>.Current
         {
-            get { return this.source.Current; }
+            get { return this.Current(); }
         }
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             ++this.DisposeCallCount;
 
-            this.source.Dispose();
+            this.enumerator.Dispose();
         }
 
-        object System.Collections.IEnumerator.Current
+        bool IEnumerator.MoveNext()
         {
-            get { return this.Current; }
+            return this.MoveNext();
         }
 
-        public bool MoveNext()
-        {
-            return this.source.MoveNext();
-        }
-
-        public void Reset()
+        void IEnumerator.Reset()
         {
             ++this.ResetCallCount;
 
-            this.source.Reset();
+            this.enumerator.Reset();
+        }
+
+        object IEnumerator.Current
+        {
+            get { return this.Current(); }
         }
         #endregion
     }

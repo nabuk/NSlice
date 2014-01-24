@@ -13,6 +13,11 @@ namespace NSliceTests.Tests.EnumerableTests
 {
     public class EnumerableSliceDeleteTests : BaseSliceCaseTests
     {
+        private const string sliceDeleteResultErrorFormat = "For {0}.SliceDelete({1}, {2}, {3}) got {4}, expected {5}";
+        private const string sliceDeleteDisposeOnceErrorFormat = "For [collection of length = {0}].SliceDelete({1}, {2}, {3}) Dispose has been called {4} time(s).";
+        private const string sliceDeleteExceptionsAreNotHandledErrorFormat = "For [collection of length = {0}].SliceDelete({1}, {2}, {3}) exception has been handled but it shouldn't be.";
+        private const string sliceDeleteDoesntCallResetErrorFormat = "For [collection of length = {0}].SliceDelete({1}, {2}, {3}) Reset has been called {4} time(s).";
+
         [Fact]
         public void SliceDelete_FromEnumerableExtensions_ReturnsCorrectValues()
         {
@@ -24,7 +29,7 @@ namespace NSliceTests.Tests.EnumerableTests
 
                 LazyAssert.True(
                     expected.SequenceEqual(sut),
-                    () => ErrorFormatter.FormatSliceDeleteResultError(source, from, to, step, expected, sut));
+                    () => ErrorFormatter.Format(sliceDeleteResultErrorFormat, source, from, to, step, expected, sut));
             });
         }
 
@@ -42,8 +47,80 @@ namespace NSliceTests.Tests.EnumerableTests
 
                     LazyAssert.True(
                         disposeCallCount == 1,
-                        () => ErrorFormatter.FormatSliceDeleteDisposeError(from, to, step, length, disposeCallCount));
+                        () => ErrorFormatter.Format(sliceDeleteDisposeOnceErrorFormat, from, to, step, length, disposeCallCount));
                 }
+            });
+        }
+
+        [Fact]
+        public void SliceDelete_FromEnumerableExtensions_CallsDisposeWhenExceptionWasThrownFromMoveNext()
+        {
+            this.RunSliceTestCases((from, to, step, length) =>
+            {
+                var sut = new EnumerableMock<int>(Enumerable.Range(0, length));
+                sut.EnumeratorCreated += e => { e.MoveNext = () => { throw new InvalidOperationException(); }; };
+
+                try
+                {
+                    EnumerableExtensions.SliceDelete(sut, from, to, step).Sum();
+                }
+                catch (InvalidOperationException) { }
+
+                if (sut.Enumerators.Count > 0)
+                {
+                    var disposeCallCount = sut.Enumerators.Single().DisposeCallCount;
+
+                    LazyAssert.True(
+                        disposeCallCount == 1,
+                        () => ErrorFormatter.Format(sliceDeleteDisposeOnceErrorFormat, from, to, step, length, disposeCallCount));
+                }
+            });
+        }
+
+        [Fact]
+        public void SliceDelete_FromEnumerableExtensions_CallsDisposeWhenExceptionWasThrownFromCurrent()
+        {
+            this.RunSliceTestCases((from, to, step, length) =>
+            {
+                var sut = new EnumerableMock<int>(Enumerable.Range(0, length));
+                sut.EnumeratorCreated += e => { e.Current = () => { throw new InvalidOperationException(); }; };
+
+                try
+                {
+                    EnumerableExtensions.SliceDelete(sut, from, to, step).Sum();
+                }
+                catch (InvalidOperationException) { }
+
+                if (sut.Enumerators.Count > 0)
+                {
+                    var disposeCallCount = sut.Enumerators.Single().DisposeCallCount;
+
+                    LazyAssert.True(
+                        disposeCallCount == 1,
+                        () => ErrorFormatter.Format(sliceDeleteDisposeOnceErrorFormat, from, to, step, length, disposeCallCount));
+                }
+            });
+        }
+
+        [Fact]
+        public void SliceDelete_FromEnumerableExtensions_DoesntHandleExceptions()
+        {
+            this.RunSliceTestCases((from, to, step, length) =>
+            {
+                bool expected = false;
+                var collection = new EnumerableMock<int>(Enumerable.Range(0, length));
+                collection.EnumeratorCreated += e => { e.Current = () => { expected = true; throw new InvalidOperationException(); }; };
+                bool sut = false;
+                try
+                {
+                    EnumerableExtensions.SliceDelete(collection, from, to, step).Sum();
+                }
+                catch (InvalidOperationException)
+                {
+                    sut = true;
+                }
+
+                LazyAssert.True(sut == expected, () => ErrorFormatter.Format(sliceDeleteExceptionsAreNotHandledErrorFormat, from, to, step, length));
             });
         }
 
@@ -61,7 +138,7 @@ namespace NSliceTests.Tests.EnumerableTests
 
                     LazyAssert.True(
                         resetCallCount == 0,
-                        () => ErrorFormatter.FormatSliceDeleteResetError(from, to, step, length, resetCallCount));
+                        () => ErrorFormatter.Format(sliceDeleteDoesntCallResetErrorFormat, from, to, step, length, resetCallCount));
                 }
             });
         }
@@ -89,7 +166,7 @@ namespace NSliceTests.Tests.EnumerableTests
 
                 LazyAssert.True(
                     expected.SequenceEqual(sut),
-                    () => ErrorFormatter.FormatSliceDeleteResultError(source, from, to, step, expected, sut));
+                    () => ErrorFormatter.Format(sliceDeleteResultErrorFormat, source, from, to, step, expected, sut));
             });
         }
 
@@ -104,7 +181,7 @@ namespace NSliceTests.Tests.EnumerableTests
 
                 LazyAssert.True(
                     expected.SequenceEqual(sut),
-                    () => ErrorFormatter.FormatSliceDeleteResultError(source, from, to, step, expected, sut));
+                    () => ErrorFormatter.Format(sliceDeleteResultErrorFormat, source, from, to, step, expected, sut));
             });
         }
     }

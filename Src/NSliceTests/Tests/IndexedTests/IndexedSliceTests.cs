@@ -11,6 +11,8 @@ namespace NSliceTests.Tests.IndexedTests
 {
     public class IndexedSliceTests : BaseSliceCaseTests
     {
+        private const string sliceResultErrorFormat = "For {0}.Slice({1}, {2}, {3}) got {4}, expected {5}";
+
         [Fact]
         public void Slice_FromIndexedExtensions_ReturnsCorrectValues()
         {
@@ -22,7 +24,7 @@ namespace NSliceTests.Tests.IndexedTests
 
                 Assert.True(
                     expected.SequenceEqual(sut),
-                    ErrorFormatter.FormatSliceResultError(source, from, to, step, expected, sut));
+                    ErrorFormatter.Format(sliceResultErrorFormat, source, from, to, step, expected, sut));
             });
         }
 

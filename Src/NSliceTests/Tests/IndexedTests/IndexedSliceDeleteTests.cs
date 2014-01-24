@@ -13,6 +13,8 @@ namespace NSliceTests.Tests.IndexedTests
 {
     public class IndexedSliceDeleteTests : BaseSliceCaseTests
     {
+        private const string sliceDeleteResultErrorFormat = "For {0}.SliceDelete({1}, {2}, {3}) got {4}, expected {5}";
+
         [Fact]
         public void SliceDelete_FromIndexedExtensions_ReturnsCorrectValues()
         {
@@ -24,7 +26,7 @@ namespace NSliceTests.Tests.IndexedTests
 
                 Assert.True(
                     expected.SequenceEqual(sut),
-                    ErrorFormatter.FormatSliceDeleteResultError(source, from, to, step, expected, sut));
+                    ErrorFormatter.Format(sliceDeleteResultErrorFormat, source, from, to, step, expected, sut));
             });
         }
 
