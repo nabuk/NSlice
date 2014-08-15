@@ -53,6 +53,7 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Dto\ChunkTestCase.cs" />
     <Compile Include="Dto\DragTestCase.cs" />
     <Compile Include="Dto\SliceTestCase.cs" />
     <Compile Include="Helpers\EnumerableMock.cs" />
@@ -63,12 +64,15 @@
     <Compile Include="Helpers\SliceExpectedResultCalculator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestData\AtOrDefaultTestCaseSource.cs" />
+    <Compile Include="TestData\ChunkTestCaseSource.cs" />
     <Compile Include="TestData\DragTestCaseSource.cs" />
     <Compile Include="TestData\SliceTestCaseSource.cs" />
+    <Compile Include="Tests\Base\BaseChunkCaseTests.cs" />
     <Compile Include="Tests\Base\BaseDragCaseTests.cs" />
     <Compile Include="Tests\Base\BaseSliceCaseTests.cs" />
     <Compile Include="Tests\EnumerableTests\EnumerableAtOrDefaultTests.cs" />
     <Compile Include="Tests\EnumerableTests\EnumerableAtTests.cs" />
+    <Compile Include="Tests\EnumerableTests\EnumerableChunkTests.cs" />
     <Compile Include="Tests\EnumerableTests\EnumerableDragTests.cs" />
     <Compile Include="Tests\EnumerableTests\EnumerableSliceDeleteTests.cs" />
     <Compile Include="Tests\EnumerableTests\EnumerableSliceTests.cs" />
