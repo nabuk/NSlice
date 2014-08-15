@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using NSlice.Helpers;
+using NSlice.Collections;
+using NSlice.Indexers;
 
 namespace NSlice
 {
@@ -86,6 +88,61 @@ namespace NSlice
             if (index < 0) index += source.Count;
             if (index < 0 || index >= source.Count) return default(T);
             return source[index];
+        }
+
+        /// <summary>
+        /// For each items returns also the previous one, e.g. for {0, 1, 2, 3} it returns {{0, 1}, {1, 2}, {2, 3}}.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of source.</typeparam>
+        /// <param name="source">Source collection.</param>
+        /// <returns>Result of slice operation. Notice, that the result collection will have one item less than the source one.</returns>
+        public static IList<DoubleItem<T>> Drag<T>(this IList<T> source)
+        {
+            throw new NotImplementedException();
+
+            if (source == null)
+                throw new ArgumentNullException("source");
+
+            return new ProxiedReadOnlyList<DoubleItem<T>>(new DoubleDragIndexer<T>(source));
+        }
+
+        /// <summary>
+        /// For each items returns also numberOfItemsToDrag-1 previous ones, e.g. for {0, 1, 2, 3, 4} and numberOfItemsToDrag=3 it returns {{0, 1, 2}, {1, 2, 3}, {2, 3, 4}}.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of source.</typeparam>
+        /// <param name="source">Source collection.</param>
+        /// <returns>Result of slice operation. Notice, that the result collection will have numberOfItemsToDrag-1 items less than the source one.</returns>
+        public static IList<IList<T>> Drag<T>(this IList<T> source, int numberOfItemsToDrag)
+        {
+            throw new NotImplementedException();
+
+            if (source == null)
+                throw new ArgumentNullException("source");
+
+            if (numberOfItemsToDrag < 1)
+                throw new ArgumentException("numberOfItemsToDrag cannot be lower than one.");
+
+            return new ProxiedReadOnlyList<IList<T>>(new DragIndexer<T>(source, numberOfItemsToDrag));
+        }
+
+        /// <summary>
+        /// Divides source collection into chunks, e.g. for {0, 1, 2, 3, 4} and chunkSize=2 it returns {{0, 1}, {2, 3}, {4}}.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of source.</typeparam>
+        /// <param name="source">Source collection.</param>
+        /// <param name="chunkSize"></param>
+        /// <returns>Chunked collection.</returns>
+        public static IList<IList<T>> Chunk<T>(this IList<T> source, int chunkSize)
+        {
+            throw new NotImplementedException();
+
+            if (source == null)
+                throw new ArgumentNullException("source");
+
+            if (chunkSize < 1)
+                throw new ArgumentException("chunkSize cannot be lower than one.");
+
+            return new ProxiedReadOnlyList<IList<T>>(new ChunkIndexer<T>(source, chunkSize));
         }
     }
 }

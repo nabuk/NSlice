@@ -23,7 +23,7 @@ namespace NSliceTests.Tests.EnumerableTests
         private const string dragWithDragCountArgumentDoesntCallResetErrorFormat = "For [collection of length = {0}].Drag({1}) Reset has been called {2} time(s).";
 
         [Fact]
-        public void Drag_NoArgumentVersion_FromEnumerableExtensions_ThrowsArgumentNullException()
+        public void Drag_NoArgumentVersion_FromEnumerableExtensions_GivenNullSource_ThrowsArgumentNullException()
         {
             Assert.Throws<ArgumentNullException>(() => EnumerableExtensions.Drag<int>(null));
         }
@@ -183,7 +183,7 @@ namespace NSliceTests.Tests.EnumerableTests
         }
 
         [Fact]
-        public void Drag_NumberOfItemsToDragVersion_FromEnumerableExtensions_ThrowsArgumentNullException()
+        public void Drag_NumberOfItemsToDragVersion_FromEnumerableExtensions_GivenNullSource_ThrowsArgumentNullException()
         {
             Assert.Throws<ArgumentNullException>(() => EnumerableExtensions.Drag<int>(null, 5));
         }

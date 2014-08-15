@@ -56,6 +56,9 @@
     <Compile Include="Helpers\ProxiedListCreator.cs" />
     <Compile Include="Helpers\SlicePropertiesCalculator.cs" />
     <Compile Include="IndexedExtensions.cs" />
+    <Compile Include="Indexers\ChunkIndexer.cs" />
+    <Compile Include="Indexers\DoubleDragIndexer.cs" />
+    <Compile Include="Indexers\DragIndexer.cs" />
     <Compile Include="Indexers\IItemIndexer.cs" />
     <Compile Include="Indexers\RangeIndexer.cs" />
     <Compile Include="Indexers\SegmentIndexer.cs" />

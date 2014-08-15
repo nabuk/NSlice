@@ -18,7 +18,7 @@ namespace NSliceTests.Tests.EnumerableTests
         private const string chunkDoesntCallResetErrorFormat = "For [collection of length = {0}].Chunk({1}) Reset has been called {2} time(s).";
 
         [Fact]
-        public void Chunk_FromEnumerableExtensions_ThrowsArgumentNullException()
+        public void Chunk_FromEnumerableExtensions_GivenNullSource_ThrowsArgumentNullException()
         {
             Assert.Throws<ArgumentNullException>(() => EnumerableExtensions.Chunk<int>(null, 5));
         }
