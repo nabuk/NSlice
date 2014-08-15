@@ -23,7 +23,7 @@ namespace NSliceTests.Tests.IndexedTests
         [InlineData(-2)]
         public void Chunk_FromIndexedExtensions_ThrowsArgumentException(int chunkSize)
         {
-            Assert.Throws<ArgumentNullException>(() => IndexedExtensions.Chunk<int>(Enumerable.Empty<int>().ToArray(), chunkSize));
+            Assert.Throws<ArgumentException>(() => IndexedExtensions.Chunk<int>(Enumerable.Empty<int>().ToArray(), chunkSize));
         }
 
         [Fact]

@@ -27,7 +27,7 @@ namespace NSliceTests.Tests.EnumerableTests
         [InlineData(-2)]
         public void Chunk_FromEnumerableExtensions_ThrowsArgumentException(int chunkSize)
         {
-            Assert.Throws<ArgumentNullException>(() => EnumerableExtensions.Chunk<int>(Enumerable.Empty<int>(), chunkSize));
+            Assert.Throws<ArgumentException>(() => EnumerableExtensions.Chunk<int>(Enumerable.Empty<int>(), chunkSize));
         }
 
         [Fact]

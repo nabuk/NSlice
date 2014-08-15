@@ -43,7 +43,7 @@ namespace NSliceTests.Tests.IndexedTests
         [InlineData(-2)]
         public void Drag_NumberOfItemsToDragVersion_FromIndexedExtensions_ThrowsArgumentException(int numberOfItemsToDrag)
         {
-            Assert.Throws<ArgumentNullException>(() => IndexedExtensions.Drag<int>(Enumerable.Empty<int>().ToArray(), numberOfItemsToDrag));
+            Assert.Throws<ArgumentException>(() => IndexedExtensions.Drag<int>(Enumerable.Empty<int>().ToArray(), numberOfItemsToDrag));
         }
 
         [Fact]

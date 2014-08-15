@@ -191,7 +191,7 @@ namespace NSliceTests.Tests.EnumerableTests
         [InlineData(-2)]
         public void Drag_NumberOfItemsToDragVersion_FromEnumerableExtensions_ThrowsArgumentException(int numberOfItemsToDrag)
         {
-            Assert.Throws<ArgumentNullException>(() => EnumerableExtensions.Drag<int>(Enumerable.Empty<int>(), numberOfItemsToDrag));
+            Assert.Throws<ArgumentException>(() => EnumerableExtensions.Drag<int>(Enumerable.Empty<int>(), numberOfItemsToDrag));
         }
 
         [Fact]
