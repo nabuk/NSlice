@@ -8,6 +8,9 @@ namespace NSliceTests.Tests.Base
 {
     public abstract class BaseDragCaseTests
     {
+        protected const string dragNoArgumentResultErrorFormat = "For Range(0, {0}).Drag() got unexpected result.";
+        protected const string dragWithDragCountArgumentResultErrorFormat = "For Range(0, {0}).Drag({1}) got unexpected result.";
+
         protected delegate void DragTestCaseDelegate(int count, int numberOfItemsToDrag);
 
         protected void RunNoArgumentDragTestCases(DragTestCaseDelegate testBody)

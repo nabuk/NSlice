@@ -78,6 +78,8 @@
     <Compile Include="Tests\EnumerableTests\EnumerableSliceTests.cs" />
     <Compile Include="Tests\IndexedTests\IndexedAtOrDefaultTests.cs" />
     <Compile Include="Tests\IndexedTests\IndexedAtTests.cs" />
+    <Compile Include="Tests\IndexedTests\IndexedChunkTests.cs" />
+    <Compile Include="Tests\IndexedTests\IndexedDragTests.cs" />
     <Compile Include="Tests\IndexedTests\IndexedSliceDeleteTests.cs" />
     <Compile Include="Tests\IndexedTests\IndexedSliceTests.cs" />
     <Compile Include="Tests\StringTests\StringAtOrDefaultTests.cs" />

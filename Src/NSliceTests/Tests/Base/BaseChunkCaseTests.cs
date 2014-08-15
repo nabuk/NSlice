@@ -8,6 +8,8 @@ namespace NSliceTests.Tests.Base
 {
     public abstract class BaseChunkCaseTests
     {
+        protected const string chunkResultErrorFormat = "For Range(0, {0}).Chunk({1}) got unexpected result.";
+
         protected delegate void ChunkTestCaseDelegate(int count, int chunkSize);
 
         protected void RunChunkTestCases(ChunkTestCaseDelegate testBody)

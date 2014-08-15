@@ -12,7 +12,6 @@ namespace NSliceTests.Tests.EnumerableTests
 {
     public class EnumerableChunkTests : BaseChunkCaseTests
     {
-        private const string chunkResultErrorFormat = "For Range(0, {0}).Chunk({1}) got unexpected result.";
         private const string chunkDisposeOnceErrorFormat = "For [collection of length = {0}].Chunk({1}) Dispose has been called {2} time(s).";
         private const string chunkExceptionsAreNotHandledErrorFormat = "For [collection of length = {0}].Chunk({1}) exception has been handled but it shouldn't be.";
         private const string chunkDoesntCallResetErrorFormat = "For [collection of length = {0}].Chunk({1}) Reset has been called {2} time(s).";

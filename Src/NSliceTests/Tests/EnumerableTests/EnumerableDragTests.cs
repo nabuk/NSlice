@@ -12,12 +12,10 @@ namespace NSliceTests.Tests.EnumerableTests
 {
     public class EnumerableDragTests : BaseDragCaseTests
     {
-        private const string dragNoArgumentResultErrorFormat = "For Range(0, {0}).Drag() got unexpected result.";
         private const string dragNoArgumentDisposeOnceErrorFormat = "For [collection of length = {0}].Drag() Dispose has been called {1} time(s).";
         private const string dragNoArgumentExceptionsAreNotHandledErrorFormat = "For [collection of length = {0}].Drag() exception has been handled but it shouldn't be.";
         private const string dragNoArgumentDoesntCallResetErrorFormat = "For [collection of length = {0}].Drag() Reset has been called {1} time(s).";
 
-        private const string dragWithDragCountArgumentResultErrorFormat = "For Range(0, {0}).Drag({1}) got unexpected result.";
         private const string dragWithDragCountArgumentDisposeOnceErrorFormat = "For [collection of length = {0}].Drag({1}) Dispose has been called {2} time(s).";
         private const string dragWithDragCountArgumentExceptionsAreNotHandledErrorFormat = "For [collection of length = {0}].Drag({1}) exception has been handled but it shouldn't be.";
         private const string dragWithDragCountArgumentDoesntCallResetErrorFormat = "For [collection of length = {0}].Drag({1}) Reset has been called {2} time(s).";
