@@ -339,6 +339,7 @@ namespace NSlice
         /// </summary>
         /// <typeparam name="T">The type of the elements of source.</typeparam>
         /// <param name="source">Source collection.</param>
+        /// <exception cref="ArgumentNullException">source is null.</exception>
         /// <returns>Result of slice operation. Notice, that the result collection will have one item less than the source one.</returns>
         public static IEnumerable<DoubleItem<T>> Drag<T>(this IEnumerable<T> source)
         {
@@ -369,6 +370,8 @@ namespace NSlice
         /// </summary>
         /// <typeparam name="T">The type of the elements of source.</typeparam>
         /// <param name="source">Source collection.</param>
+        /// <exception cref="ArgumentNullException">source is null.</exception>
+        /// <exception cref="ArgumentException">numberOfItemsToDrag is lower than 1.</exception>
         /// <returns>Result of slice operation. Notice, that the result collection will have numberOfItemsToDrag-1 items less than the source one.</returns>
         public static IEnumerable<IList<T>> Drag<T>(this IEnumerable<T> source, int numberOfItemsToDrag)
         {
@@ -437,6 +440,8 @@ namespace NSlice
         /// <typeparam name="T">The type of the elements of source.</typeparam>
         /// <param name="source">Source collection.</param>
         /// <param name="chunkSize"></param>
+        /// <exception cref="ArgumentNullException">source is null.</exception>
+        /// <exception cref="ArgumentException">chunkSize is lower than 1.</exception>
         /// <returns>Chunked collection.</returns>
         public static IEnumerable<IList<T>> Chunk<T>(this IEnumerable<T> source, int chunkSize)
         {
