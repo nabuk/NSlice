@@ -58,7 +58,7 @@ namespace NSlice.Helpers
 
                     while (true)
                     {
-                        for (int i = 1; i < bufferSize - numberOfItemsToDrag; ++i)
+                        for (int i = 1; i <= bufferSize - numberOfItemsToDrag; ++i)
                         {
                             if (!enumerator.MoveNext())
                                 yield break;
