@@ -333,5 +333,137 @@ namespace NSlice
                 return default(T);
             }
         }
+
+        /// <summary>
+        /// For each items returns also the previous one, e.g. for {0, 1, 2, 3} it returns {{0, 1}, {1, 2}, {2, 3}}.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of source.</typeparam>
+        /// <param name="source">Source collection.</param>
+        /// <returns>Result of slice operation. Notice, that the result collection will have one item less than the source one.</returns>
+        public static IEnumerable<DoubleItem<T>> Drag<T>(this IEnumerable<T> source)
+        {
+            throw new NotImplementedException();
+
+            if (source == null)
+                throw new ArgumentNullException("source");
+
+            using (var enumerator = source.GetEnumerator())
+            {
+                if (!enumerator.MoveNext())
+                    yield break;
+
+                T prev = enumerator.Current;
+                T curr;
+
+                while (enumerator.MoveNext())
+                {
+                    curr = enumerator.Current;
+                    yield return new DoubleItem<T>(prev, curr);
+                    prev = curr;
+                }
+            }
+        }
+
+        /// <summary>
+        /// For each items returns also numberOfItemsToDrag-1 previous ones, e.g. for {0, 1, 2, 3, 4} and numberOfItemsToDrag=3 it returns {{0, 1, 2}, {1, 2, 3}, {2, 3, 4}}.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of source.</typeparam>
+        /// <param name="source">Source collection.</param>
+        /// <returns>Result of slice operation. Notice, that the result collection will have numberOfItemsToDrag-1 items less than the source one.</returns>
+        public static IEnumerable<IList<T>> Drag<T>(this IEnumerable<T> source, int numberOfItemsToDrag)
+        {
+            throw new NotImplementedException();
+
+            if (source == null)
+                throw new ArgumentNullException("source");
+
+            if (numberOfItemsToDrag < 1)
+                throw new ArgumentException("numberOfItemsToDrag cannot be lower than one.");
+
+            using (var enumerator = source.GetEnumerator())
+            {
+                if (numberOfItemsToDrag == 1)
+                    while (enumerator.MoveNext())
+                        yield return new[] { enumerator.Current };
+                else
+                {
+                    if (!enumerator.MoveNext())
+                        yield break;
+
+                    var dragMinusOne = numberOfItemsToDrag - 1;
+                    var bufferSize = Math.Max(numberOfItemsToDrag * 2, 1024);
+                    var buffer = new T[bufferSize];
+                    buffer[0] = enumerator.Current;
+
+                    for (int i = 1; i < dragMinusOne; ++i)
+                    {
+                        if (!enumerator.MoveNext())
+                            yield break;
+
+                        buffer[i] = enumerator.Current;
+                    }
+
+                    if (!enumerator.MoveNext())
+                        yield break;
+                    buffer[dragMinusOne] = enumerator.Current;
+                    yield return ProxiedListCreator.GetSegment(buffer, 0, numberOfItemsToDrag);
+
+                    while (true)
+                    {
+                        for (int i = 1; i < bufferSize - numberOfItemsToDrag; ++i)
+                        {
+                            if (!enumerator.MoveNext())
+                                yield break;
+                            buffer[dragMinusOne + i] = enumerator.Current;
+                            yield return ProxiedListCreator.GetSegment(buffer, i, numberOfItemsToDrag);
+                        }
+
+                        if (!enumerator.MoveNext())
+                            yield break;
+
+                        var newBuffer = new T[bufferSize];
+                        Array.Copy(buffer, bufferSize - dragMinusOne, newBuffer, 0, dragMinusOne);
+                        buffer = newBuffer;
+                        buffer[dragMinusOne] = enumerator.Current;
+                        yield return ProxiedListCreator.GetSegment(buffer, 0, numberOfItemsToDrag);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Divides source collection into chunks, e.g. for {0, 1, 2, 3, 4} and chunkSize=2 it returns {{0, 1}, {2, 3}, {4}}.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of source.</typeparam>
+        /// <param name="source">Source collection.</param>
+        /// <param name="chunkSize"></param>
+        /// <returns>Chunked collection.</returns>
+        public static IEnumerable<IList<T>> Chunk<T>(this IEnumerable<T> source, int chunkSize)
+        {
+            throw new NotImplementedException();
+
+            if (source == null)
+                throw new ArgumentNullException("source");
+
+            if (chunkSize < 1)
+                throw new ArgumentException("chunkSize cannot be lower than one.");
+
+            var result = new T[chunkSize];
+            var count = 0;
+
+            foreach (var item in source)
+            {
+                result[count++] = item;
+                if (count == chunkSize)
+                {
+                    yield return result;
+                    result = new T[chunkSize];
+                    count = 0;
+                }
+            }
+
+            if (count > 0)
+                yield return ProxiedListCreator.GetSegment(result, 0, count);
+        }
     }
 }

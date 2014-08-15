@@ -47,6 +47,7 @@
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Collections\ProxiedReadOnlyList.cs" />
+    <Compile Include="DoubleItem.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="Helpers\DynamicBuffer.cs" />
     <Compile Include="Helpers\DynamicRotativeBuffer.cs" />
@@ -57,6 +58,7 @@
     <Compile Include="IndexedExtensions.cs" />
     <Compile Include="Indexers\IItemIndexer.cs" />
     <Compile Include="Indexers\RangeIndexer.cs" />
+    <Compile Include="Indexers\SegmentIndexer.cs" />
     <Compile Include="Indexers\SliceDeleteItemIndexer.cs" />
     <Compile Include="Indexers\SliceItemIndexer.cs" />
     <Compile Include="Dto\SliceProperties.cs" />

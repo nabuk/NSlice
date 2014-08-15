@@ -18,5 +18,11 @@ namespace NSlice.Helpers
             var indexer = new SliceDeleteItemIndexer<T>(source, from, to, step);
             return new ProxiedReadOnlyList<T>(indexer);
         }
+
+        internal static IList<T> GetSegment<T>(IList<T> source, int from, int count)
+        {
+            var indexer = new SegmentIndexer<T>(source, from, count);
+            return new ProxiedReadOnlyList<T>(indexer);
+        }
     }
 }
