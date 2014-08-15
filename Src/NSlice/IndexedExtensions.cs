@@ -99,8 +99,6 @@ namespace NSlice
         /// <returns>Result of slice operation. Notice, that the result collection will have one item less than the source one.</returns>
         public static IList<DoubleItem<T>> Drag<T>(this IList<T> source)
         {
-            throw new NotImplementedException();
-
             if (source == null)
                 throw new ArgumentNullException("source");
 
@@ -117,8 +115,6 @@ namespace NSlice
         /// <returns>Result of slice operation. Notice, that the result collection will have numberOfItemsToDrag-1 items less than the source one.</returns>
         public static IList<IList<T>> Drag<T>(this IList<T> source, int numberOfItemsToDrag)
         {
-            throw new NotImplementedException();
-
             if (source == null)
                 throw new ArgumentNullException("source");
 
@@ -139,8 +135,6 @@ namespace NSlice
         /// <returns>Chunked collection.</returns>
         public static IList<IList<T>> Chunk<T>(this IList<T> source, int chunkSize)
         {
-            throw new NotImplementedException();
-
             if (source == null)
                 throw new ArgumentNullException("source");
 

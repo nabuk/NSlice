@@ -51,6 +51,8 @@
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="Helpers\DynamicBuffer.cs" />
     <Compile Include="Helpers\DynamicRotativeBuffer.cs" />
+    <Compile Include="Helpers\EnumerableChunkCases.cs" />
+    <Compile Include="Helpers\EnumerableDragCases.cs" />
     <Compile Include="Helpers\EnumerableSliceDeleteCases.cs" />
     <Compile Include="Helpers\EnumeratorHelpers.cs" />
     <Compile Include="Helpers\ProxiedListCreator.cs" />
